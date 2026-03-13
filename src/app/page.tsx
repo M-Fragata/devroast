@@ -1,65 +1,131 @@
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { LeaderboardRow } from "@/components/ui/leaderboard-row";
+import { ScoreRing } from "@/components/ui/score-ring";
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+	// Static data from API (simulated)
+	const leaderboardData = [
+		{
+			rank: 1,
+			score: 1250,
+			code: "def quick_sort(arr): ...",
+			language: "python",
+		},
+		{
+			rank: 2,
+			score: 1180,
+			code: "const sum = (a,b) => a+b",
+			language: "typescript",
+		},
+		{
+			rank: 3,
+			score: 1100,
+			code: "fn main() { println!(); }",
+			language: "rust",
+		},
+		{
+			rank: 4,
+			score: 1050,
+			code: "SELECT COUNT(*) FROM users",
+			language: "sql",
+		},
+		{
+			rank: 5,
+			score: 980,
+			code: "public static void main(...)",
+			language: "java",
+		},
+		{ rank: 6, score: 920, code: "#include <iostream>", language: "cpp" },
+		{ rank: 7, score: 850, code: "package main", language: "go" },
+		{ rank: 8, score: 790, code: "let x = 5", language: "javascript" },
+	];
+
+	return (
+		<div className="container mx-auto px-4 py-8 max-w-6xl space-y-12">
+			{/* Hero Section */}
+			<section className="text-center space-y-4">
+				<h1 className="text-4xl font-bold tracking-tight">
+					DevRoast - Compartilhe seu código
+				</h1>
+				<p className="text-lg text-text-secondary">
+					Compartilhe seus códigos e ganhe feedback da comunidade.
+				</p>
+				<div className="flex justify-center">
+					<ScoreRing score={75} size={200} />
+				</div>
+			</section>
+
+			{/* Submit Code Form Section */}
+			<section className="space-y-4">
+				<h2 className="text-2xl font-semibold">
+					PASTE YOUR CODE. GET ROASTED.
+				</h2>
+				<Card variant="analysis">
+					<CardHeader>
+						<CardTitle>Share a snippet</CardTitle>
+						<CardDescription>
+							Paste your code and get feedback from the community.
+						</CardDescription>
+					</CardHeader>
+					<div className="p-4 space-y-4">
+						<textarea
+							className="w-full h-32 p-3 border border-border-primary rounded-md bg-background text-foreground placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-ring"
+							placeholder="Paste your code here..."
+						/>
+						<div className="flex items-center justify-between">
+							<div className="flex items-center space-x-2">
+								<label
+									htmlFor="poast-mode"
+									className="text-sm text-text-secondary"
+								>
+									Poast mode:
+								</label>
+								<Input
+									type="text"
+									id="poast-mode"
+									className="w-40"
+									placeholder="normal, roast..."
+								/>
+							</div>
+							<Button variant="submit" size="submit">
+								Submit
+							</Button>
+						</div>
+					</div>
+				</Card>
+			</section>
+
+			{/* Shame Leaderboard Section (worst evaluations) */}
+			<section id="leaderboard" className="space-y-4">
+				<h2 className="text-2xl font-semibold">Shame Leaderboard</h2>
+				<Card>
+					<CardHeader>
+						<CardTitle>Worst Code Snippets</CardTitle>
+						<CardDescription>
+							Most roasted code snippets this month.
+						</CardDescription>
+					</CardHeader>
+					<div className="divide-y divide-border-primary">
+						{/* Reverse order to show worst first */}
+						{[...leaderboardData].reverse().map((row, index) => (
+							<LeaderboardRow
+								key={row.rank}
+								rank={leaderboardData.length - index}
+								score={row.score}
+								code={row.code}
+								language={row.language}
+							/>
+						))}
+					</div>
+				</Card>
+			</section>
+		</div>
+	);
 }
