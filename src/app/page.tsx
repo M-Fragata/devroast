@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 import {
 	Card,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { LeaderboardRow } from "@/components/ui/leaderboard-row";
-import { ScoreRing } from "@/components/ui/score-ring";
+} from "@/app/components/ui/card";
+import { Input } from "@/app/components/ui/input";
+import { LeaderboardRow } from "@/app/components/ui/leaderboard-row";
+import { ScoreRing } from "@/app/components/ui/score-ring";
 
 export default function Home() {
 	// Static data from API (simulated)
