@@ -71,20 +71,20 @@ export default async function ResultPage() {
 		switch (status) {
 			case "critical":
 				return {
-					dot: "bg-red-accent",
-					text: "text-red-accent",
+					dot: "bg-[#EF4444]",
+					text: "text-[#EF4444]",
 					label: "critical",
 				};
 			case "warning":
 				return {
-					dot: "bg-accent-amber",
-					text: "text-accent-amber",
+					dot: "bg-[#F59E0B]",
+					text: "text-[#F59E0B]",
 					label: "warning",
 				};
 			case "good":
 				return {
-					dot: "bg-green-accent",
-					text: "text-green-accent",
+					dot: "bg-[#22C55E]",
+					text: "text-[#22C55E]",
 					label: "good",
 				};
 			default:
