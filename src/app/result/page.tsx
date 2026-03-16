@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CodeBlock } from "@/app/components/ui/code-block";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function ResultPage() {
 	const resultData = {
 		score: 3.5,
 		verdict: "needs_serious_help",
-		verdictColor: "text-red-accent",
+		verdictColor: "accent-red",
 		roast:
 			'"this code looks like it was written during a power outage... in 2005."',
 		language: "javascript",
@@ -24,38 +25,75 @@ export default async function ResultPage() {
 			{
 				title: "Variable Naming",
 				description: "Use descriptive variable names instead of single letters",
-				color: "text-orange-accent",
+				status: "warning" as const,
 			},
 			{
 				title: "Error Handling",
 				description: "Add try-catch blocks for async operations",
-				color: "text-red-accent",
+				status: "critical" as const,
 			},
 			{
 				title: "Code Structure",
 				description: "Break down complex functions into smaller, focused units",
-				color: "text-yellow-accent",
+				status: "warning" as const,
 			},
 			{
 				title: "Documentation",
 				description: "Add JSDoc comments to explain function purpose",
-				color: "text-green-accent",
+				status: "good" as const,
 			},
 		],
 		diff: {
 			original: "your_code.ts",
 			improved: "improved_code.ts",
 			lines: [
-				{ type: "context", content: "const result = await fetch(url);" },
-				{ type: "remove", content: "if (!response.ok) throw error;" },
-				{ type: "remove", content: "return response.json();" },
-				{ type: "remove", content: "}" },
-				{ type: "remove", content: "const data = await fetchData();" },
-				{ type: "remove", content: "console.log(data);" },
-				{ type: "add", content: "const data = await fetchDataSafe(url);" },
-				{ type: "context", content: "console.log(data);" },
+				{ type: "context", content: "  function calculateTotal(items) {" },
+				{ type: "remove", content: "    var total = 0;" },
+				{
+					type: "remove",
+					content: "    for (var i = 0; i < items.length; i++) {",
+				},
+				{ type: "remove", content: "      total = total + items[i].price;" },
+				{ type: "remove", content: "    }" },
+				{ type: "remove", content: "    return total;" },
+				{
+					type: "add",
+					content:
+						"    return items.reduce((sum, item) => sum + item.price, 0);",
+				},
+				{ type: "context", content: "  }" },
 			],
 		},
+	};
+
+	// Helper to get status color
+	const getStatusColor = (status: string) => {
+		switch (status) {
+			case "critical":
+				return {
+					dot: "bg-red-accent",
+					text: "text-red-accent",
+					label: "critical",
+				};
+			case "warning":
+				return {
+					dot: "bg-orange-accent",
+					text: "text-orange-accent",
+					label: "warning",
+				};
+			case "good":
+				return {
+					dot: "bg-green-accent",
+					text: "text-green-accent",
+					label: "good",
+				};
+			default:
+				return {
+					dot: "bg-gray-accent",
+					text: "text-gray-accent",
+					label: status,
+				};
+		}
 	};
 
 	return (
@@ -165,29 +203,12 @@ export default async function ResultPage() {
 							</span>
 						</div>
 
-						{/* Code Preview */}
-						<div className="bg-bg-input border border-border-primary rounded overflow-hidden">
-							<div className="flex">
-								{/* Line Numbers */}
-								<div className="w-12 bg-bg-surface border-r border-border-primary p-3 flex flex-col gap-2 text-right">
-									{Array.from({ length: resultData.lines }, (_, i) => (
-										<span
-											key={i}
-											className="text-text-tertiary font-mono text-xs leading-5"
-										>
-											{i + 1}
-										</span>
-									))}
-								</div>
-
-								{/* Code Content */}
-								<div className="flex-1 p-3 overflow-x-auto">
-									<pre className="text-xs leading-5 whitespace-pre">
-										<code className="text-text-primary">{resultData.code}</code>
-									</pre>
-								</div>
-							</div>
-						</div>
+						{/* Code Preview using CodeBlock */}
+						<CodeBlock
+							code={resultData.code}
+							language={resultData.language}
+							className="w-full"
+						/>
 					</div>
 
 					{/* Divider */}
@@ -207,34 +228,30 @@ export default async function ResultPage() {
 
 						{/* Issues Grid */}
 						<div className="grid grid-cols-2 gap-5">
-							{resultData.issues.map((issue, index) => (
-								<div
-									key={index}
-									className="p-5 border border-border-primary rounded space-y-2"
-								>
-									<div className="flex items-center gap-2">
-										<div
-											className={`w-2 h-2 rounded-full ${
-												issue.color === "text-red-accent"
-													? "bg-red-accent"
-													: issue.color === "text-orange-accent"
-														? "bg-orange-accent"
-														: issue.color === "text-yellow-accent"
-															? "bg-yellow-accent"
-															: "bg-green-accent"
-											}`}
-										/>
-										<span
-											className={`${issue.color} font-mono text-xs font-medium`}
-										>
+							{resultData.issues.map((issue, index) => {
+								const status = getStatusColor(issue.status);
+								return (
+									<div
+										key={index}
+										className="p-5 border border-border-primary rounded space-y-2"
+									>
+										<div className="flex items-center gap-2">
+											<div className={`w-2 h-2 rounded-full ${status.dot}`} />
+											<span
+												className={`${status.text} font-mono text-xs font-medium`}
+											>
+												{status.label}
+											</span>
+										</div>
+										<p className="text-text-primary font-mono text-sm font-medium">
 											{issue.title}
-										</span>
+										</p>
+										<p className="text-text-secondary font-mono text-xs">
+											{issue.description}
+										</p>
 									</div>
-									<p className="text-text-secondary font-mono text-xs">
-										{issue.description}
-									</p>
-								</div>
-							))}
+								);
+							})}
 						</div>
 					</div>
 
@@ -271,12 +288,29 @@ export default async function ResultPage() {
 											: line.type === "add"
 												? "bg-[#10B98115]"
 												: "";
+									const prefixColor =
+										line.type === "remove"
+											? "text-red-accent"
+											: line.type === "add"
+												? "text-green-accent"
+												: "text-text-tertiary";
+									const prefixContent =
+										line.type === "remove"
+											? "-"
+											: line.type === "add"
+												? "+"
+												: " ";
 									return (
 										<div
 											key={index}
-											className={`h-7 flex items-center px-4 ${bgColor}`}
+											className={`h-7 flex items-center ${bgColor}`}
 										>
-											<span className="text-xs text-text-primary">
+											<span
+												className={`w-5 text-center ${prefixColor} font-mono text-xs`}
+											>
+												{prefixContent}
+											</span>
+											<span className="text-xs text-text-primary font-mono">
 												{line.content}
 											</span>
 										</div>
