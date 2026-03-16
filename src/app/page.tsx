@@ -1,4 +1,5 @@
 import { RaySoCodeEditor } from "@/app/components/CodeEditor/RaySoCodeEditor";
+import { MetricsContainer } from "@/app/components/MetricsContainer";
 
 export default function HomePage() {
 	return (
@@ -24,9 +25,7 @@ export default function HomePage() {
 
 				{/* Footer Stats */}
 				<div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-text-tertiary text-xs md:text-sm">
-					<span>2,847 codes roasted</span>
-					<span className="hidden sm:inline">·</span>
-					<span>avg score: 4.2/10</span>
+					<MetricsContainer />
 				</div>
 
 				{/* Spacer */}

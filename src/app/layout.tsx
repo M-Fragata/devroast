@@ -7,6 +7,7 @@ import {
 	NavbarLink,
 	NavbarSpacer,
 } from "@/layouts/navbar";
+import { Providers } from "@/lib/providers";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -33,16 +34,18 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<Navbar>
-					<NavbarBrand>
-						<span className="text-accent-green font-mono font-bold">
-							DevRoast
-						</span>
-					</NavbarBrand>
-					<NavbarSpacer />
-					<NavbarLink href="/leaderboard">Leaderboard</NavbarLink>
-				</Navbar>
-				{children}
+				<Providers>
+					<Navbar>
+						<NavbarBrand>
+							<span className="text-accent-green font-mono font-bold">
+								DevRoast
+							</span>
+						</NavbarBrand>
+						<NavbarSpacer />
+						<NavbarLink href="/leaderboard">Leaderboard</NavbarLink>
+					</Navbar>
+					{children}
+				</Providers>
 			</body>
 		</html>
 	);
