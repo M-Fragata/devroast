@@ -40,7 +40,7 @@ export default function RootLayout({
 						</span>
 					</NavbarBrand>
 					<NavbarSpacer />
-					<NavbarLink href="#leaderboard">Leaderboard</NavbarLink>
+					<NavbarLink href="/leaderboard">Leaderboard</NavbarLink>
 				</Navbar>
 				{children}
 			</body>

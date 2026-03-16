@@ -9,6 +9,9 @@ import { detectLanguage, type Language } from "./language-detection";
 // CSS customizado para quebrar texto e cores saturadas
 import "./RaySoCodeEditor.css";
 
+// Character limit constant for code snippets
+const MAX_CODE_LENGTH = 2000;
+
 interface RaySoCodeEditorProps {
 	initialCode?: string;
 	initialLanguage?: Language;
@@ -25,6 +28,7 @@ export function RaySoCodeEditor({
 	const [highlightedCode, setHighlightedCode] = useState("");
 	const [isDetected, setIsDetected] = useState(!initialLanguage);
 	const [roastMode, setRoastMode] = useState(true);
+	const [charCount, setCharCount] = useState(initialCode.length);
 	
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const previewRef = useRef<HTMLDivElement>(null);
@@ -93,9 +97,13 @@ export function RaySoCodeEditor({
 	// Handle code change
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const newCode = e.target.value;
-		setCode(newCode);
-		if (onChange) {
-			onChange(newCode, language);
+		// Enforce character limit
+		if (newCode.length <= MAX_CODE_LENGTH) {
+			setCode(newCode);
+			setCharCount(newCode.length);
+			if (onChange) {
+				onChange(newCode, language);
+			}
 		}
 	};
 
@@ -195,9 +203,17 @@ export function RaySoCodeEditor({
 						// maximum sarcasm enabled
 					</span>
 				</div>
-				<button className="bg-[#10B981] text-[#0A0A0A] text-xs font-medium px-4 py-2 rounded cursor-pointer hover:bg-[#0D9668] transition-colors">
-					$ roast_my_code
-				</button>
+				<div className="flex items-center gap-4">
+					<span className={`text-xs ${charCount > MAX_CODE_LENGTH ? 'text-red-400' : 'text-[#6B7280]'}`}>
+						{charCount}/{MAX_CODE_LENGTH}
+					</span>
+					<button 
+						disabled={charCount > MAX_CODE_LENGTH}
+						className="bg-[#10B981] text-[#0A0A0A] text-xs font-medium px-4 py-2 rounded cursor-pointer hover:bg-[#0D9668] transition-colors disabled:bg-[#4B5563] disabled:cursor-not-allowed disabled:text-[#6B7280]"
+					>
+						$ roast_my_code
+					</button>
+				</div>
 			</div>
 		</div>
 	);

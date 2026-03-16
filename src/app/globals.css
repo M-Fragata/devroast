@@ -8,25 +8,26 @@
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
-	--color-primary: #171717;
-	--color-primary-foreground: #ffffff;
-	--color-secondary: #f4f4f5;
-	--color-secondary-foreground: #171717;
-	--color-destructive: #ef4444;
-	--color-destructive-foreground: #ffffff;
-	--color-muted: #f4f4f5;
-	--color-muted-foreground: #737373;
-	--color-accent: #f4f4f5;
-	--color-accent-foreground: #171717;
-	--color-ring: #171717;
-	--color-input: #e5e5e5;
-	--color-accent-green: #16a34a;
-	--color-accent-amber: #f59e0b;
-	--color-border-primary: #e5e5e5;
-	--color-text-secondary: #737373;
-	--color-text-tertiary: #a3a3a3;
-	--color-bg-input: #f4f4f5;
-	--color-bg-page: #fafafa;
+	--color-primary: #FF8400;
+	--color-primary-foreground: #111111;
+	--color-secondary: #2E2E2E;
+	--color-secondary-foreground: #FFFFFF;
+	--color-destructive: #FF5C33;
+	--color-destructive-foreground: #111111;
+	--color-muted: #2E2E2E;
+	--color-muted-foreground: #B8B9B6;
+	--color-accent: #111111;
+	--color-accent-foreground: #F2F3F0;
+	--color-ring: #666666;
+	--color-input: #2E2E2E;
+	--color-accent-green: #22C55E;
+	--color-accent-amber: #F59E0B;
+	--color-border-primary: #1F1F1F;
+	--color-text-secondary: #6B7280;
+	--color-text-tertiary: #4B5563;
+	--color-bg-input: #111111;
+	--color-bg-page: #0C0C0C;
+	--color-bg-surface: #0F0F0F;
 	--color-diff-removed: #1a0a0a;
 	--color-diff-added: #0a1a0f;
 	--font-sans: var(--font-geist-sans);
@@ -35,8 +36,8 @@
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #0a0a0a;
-		--foreground: #ededed;
+		--background: #0C0C0C;
+		--foreground: #F2F3F0;
 	}
 }
 
