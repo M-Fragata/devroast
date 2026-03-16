@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import { useAtom } from "jotai";
-import { highlighterAtom } from "./use-shiki";
-import { detectLanguage, type Language } from "./language-detection";
+import { useEffect, useRef, useState } from "react";
 import { codeToHtmlInline } from "./code-to-html-inline";
+import { detectLanguage, type Language } from "./language-detection";
+import { highlighterAtom } from "./use-shiki";
 
 // Character limit constant for code snippets
 const MAX_CODE_LENGTH = 2000;
@@ -22,17 +22,20 @@ export function CodeEditor({
 }: CodeEditorProps) {
 	const [highlighter] = useAtom(highlighterAtom);
 	const [code, setCode] = useState(initialCode);
-	const [language, setLanguage] = useState<Language>(initialLanguage || "plaintext");
+	const [language, setLanguage] = useState<Language>(
+		initialLanguage || "plaintext",
+	);
 	const [highlightedCode, setHighlightedCode] = useState("");
 	const [isDetected, setIsDetected] = useState(!initialLanguage);
 	const [roastMode, setRoastMode] = useState(true);
 	const [charCount, setCharCount] = useState(initialCode.length);
-	
+
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const previewRef = useRef<HTMLDivElement>(null);
 	const syncScrollRef = useRef(false);
 
 	// Detect language automatically when code changes
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
 		if (!initialLanguage && code.trim()) {
 			const detected = detectLanguage(code);
@@ -45,6 +48,7 @@ export function CodeEditor({
 	}, [code, initialLanguage]);
 
 	// Highlight code using Shiki
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
 		if (!code) {
 			setHighlightedCode("");
@@ -53,7 +57,9 @@ export function CodeEditor({
 
 		if (!highlighter) {
 			// Show plain text while highlighter is loading
-			setHighlightedCode(`<pre style="background-color: #282c34; color: #abb2bf; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; margin: 0; padding: 1rem;"><code>${escapeHtml(code)}</code></pre>`);
+			setHighlightedCode(
+				`<pre style="background-color: #282c34; color: #abb2bf; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; margin: 0; padding: 1rem;"><code>${escapeHtml(code)}</code></pre>`,
+			);
 			return;
 		}
 
@@ -62,11 +68,18 @@ export function CodeEditor({
 
 		async function highlight() {
 			try {
-				const html = await codeToHtmlInline(code, language, "one-dark-pro", currentHighlighter);
+				const html = await codeToHtmlInline(
+					code,
+					language,
+					"one-dark-pro",
+					currentHighlighter,
+				);
 				setHighlightedCode(html);
 			} catch (error) {
 				console.error("Failed to highlight code:", error);
-				setHighlightedCode(`<pre style="background-color: #282c34; color: #abb2bf; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; margin: 0; padding: 1rem;"><code>${escapeHtml(code)}</code></pre>`);
+				setHighlightedCode(
+					`<pre style="background-color: #282c34; color: #abb2bf; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; margin: 0; padding: 1rem;"><code>${escapeHtml(code)}</code></pre>`,
+				);
 			}
 		}
 
@@ -92,11 +105,12 @@ export function CodeEditor({
 			const end = textarea.selectionEnd;
 			const newCode = code.substring(0, start) + "  " + code.substring(end);
 			setCode(newCode);
-			
+
 			// Move cursor after inserted tab
 			setTimeout(() => {
 				if (textareaRef.current) {
-					textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
+					textareaRef.current.selectionStart =
+						textareaRef.current.selectionEnd = start + 2;
 				}
 			}, 0);
 		}
@@ -158,9 +172,7 @@ export function CodeEditor({
 						<option value="bash">Bash</option>
 					</select>
 					{isDetected && (
-						<span className="text-[#6B7280] text-xs">
-							detected: {language}
-						</span>
+						<span className="text-[#6B7280] text-xs">detected: {language}</span>
 					)}
 				</div>
 			</div>
@@ -173,7 +185,7 @@ export function CodeEditor({
 					className="absolute inset-0 p-4 overflow-auto pointer-events-none text-sm leading-relaxed"
 					dangerouslySetInnerHTML={{ __html: highlightedCode }}
 				/>
-				
+
 				{/* Transparent Textarea for Input */}
 				<textarea
 					ref={textareaRef}
@@ -193,24 +205,34 @@ export function CodeEditor({
 			{/* Actions Bar */}
 			<div className="h-10 flex items-center justify-between px-4 bg-[#111111] border border-[#2A2A2A] border-t-0">
 				<div className="flex items-center gap-4">
-					<button 
+					<button
 						onClick={toggleRoastMode}
 						className="flex items-center gap-2 cursor-pointer"
 					>
-						<div className={`w-10 h-[22px] rounded-full flex items-center justify-between px-1 transition-colors ${roastMode ? 'bg-[#10B981]' : 'bg-[#4B5563]'}`}>
-							<div className={`w-4 h-4 bg-[#0A0A0A] rounded-full transition-transform ${roastMode ? 'translate-x-5' : 'translate-x-0'}`} />
+						<div
+							className={`w-10 h-[22px] rounded-full flex items-center justify-between px-1 transition-colors ${roastMode ? "bg-[#10B981]" : "bg-[#4B5563]"}`}
+						>
+							<div
+								className={`w-4 h-4 bg-[#0A0A0A] rounded-full transition-transform ${roastMode ? "translate-x-5" : "translate-x-0"}`}
+							/>
 						</div>
-						<span className={`text-xs ${roastMode ? 'text-[#10B981]' : 'text-[#6B7280]'}`}>roast mode</span>
+						<span
+							className={`text-xs ${roastMode ? "text-[#10B981]" : "text-[#6B7280]"}`}
+						>
+							roast mode
+						</span>
 					</button>
 					<span className="text-[#4B5563] text-xs">
-						// maximum sarcasm enabled
+						{"// maximum sarcasm enabled"}
 					</span>
 				</div>
 				<div className="flex items-center gap-4">
-					<span className={`text-xs ${charCount > MAX_CODE_LENGTH ? 'text-red-400' : 'text-[#6B7280]'}`}>
+					<span
+						className={`text-xs ${charCount > MAX_CODE_LENGTH ? "text-red-400" : "text-[#6B7280]"}`}
+					>
 						{charCount}/{MAX_CODE_LENGTH}
 					</span>
-					<button 
+					<button
 						disabled={charCount > MAX_CODE_LENGTH}
 						className="bg-[#10B981] text-[#0A0A0A] text-xs font-medium px-4 py-2 rounded cursor-pointer hover:bg-[#0D9668] transition-colors disabled:bg-[#4B5563] disabled:cursor-not-allowed disabled:text-[#6B7280]"
 					>

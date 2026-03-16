@@ -22,6 +22,7 @@
 	--color-input: #2E2E2E;
 	--color-accent-green: #22C55E;
 	--color-accent-amber: #F59E0B;
+	--color-accent-red: #EF4444;
 	--color-border-primary: #1F1F1F;
 	--color-text-secondary: #6B7280;
 	--color-text-tertiary: #4B5563;
@@ -30,6 +31,12 @@
 	--color-bg-surface: #0F0F0F;
 	--color-diff-removed: #1a0a0a;
 	--color-diff-added: #0a1a0f;
+	--color-syn-keyword: #C678DD;
+	--color-syn-function: #61AFEF;
+	--color-syn-string: #E5C07B;
+	--color-syn-number: #D19A66;
+	--color-syn-operator: #ABB2BF;
+	--color-syn-variable: #E06C75;
 	--font-sans: var(--font-geist-sans);
 	--font-mono: var(--font-geist-mono);
 }
