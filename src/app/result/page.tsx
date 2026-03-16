@@ -1,0 +1,292 @@
+import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+	title: "Result - DevRoast",
+	description: "Your roast result",
+};
+
+export default async function ResultPage() {
+	// Static data for now - will be replaced with dynamic data later
+	const resultData = {
+		score: 3.5,
+		verdict: "needs_serious_help",
+		verdictColor: "text-red-accent",
+		roast:
+			'"this code looks like it was written during a power outage... in 2005."',
+		language: "javascript",
+		lines: 7,
+		code: `function calculateTotal(items) {
+  return items.reduce((total, item) => total + item.price, 0);
+}`,
+		issues: [
+			{
+				title: "Variable Naming",
+				description: "Use descriptive variable names instead of single letters",
+				color: "text-orange-accent",
+			},
+			{
+				title: "Error Handling",
+				description: "Add try-catch blocks for async operations",
+				color: "text-red-accent",
+			},
+			{
+				title: "Code Structure",
+				description: "Break down complex functions into smaller, focused units",
+				color: "text-yellow-accent",
+			},
+			{
+				title: "Documentation",
+				description: "Add JSDoc comments to explain function purpose",
+				color: "text-green-accent",
+			},
+		],
+		diff: {
+			original: "your_code.ts",
+			improved: "improved_code.ts",
+			lines: [
+				{ type: "context", content: "const result = await fetch(url);" },
+				{ type: "remove", content: "if (!response.ok) throw error;" },
+				{ type: "remove", content: "return response.json();" },
+				{ type: "remove", content: "}" },
+				{ type: "remove", content: "const data = await fetchData();" },
+				{ type: "remove", content: "console.log(data);" },
+				{ type: "add", content: "const data = await fetchDataSafe(url);" },
+				{ type: "context", content: "console.log(data);" },
+			],
+		},
+	};
+
+	return (
+		<div className="min-h-screen bg-bg-page text-foreground font-mono">
+			<main className="flex flex-col items-center py-6 md:py-10 px-4 md:px-10">
+				{/* Results Content */}
+				<div className="w-full max-w-[960px] space-y-10 px-0 md:px-0">
+					{/* Score Hero */}
+					<div className="flex items-center gap-12">
+						{/* Score Ring */}
+						<div className="relative w-[180px] h-[180px] flex items-center justify-center">
+							<svg className="w-full h-full transform -rotate-90">
+								<defs>
+									<linearGradient
+										id="scoreGradient"
+										x1="0%"
+										y1="0%"
+										x2="100%"
+										y2="0%"
+									>
+										<stop offset="0%" stopColor="#EF4444" />
+										<stop offset="35%" stopColor="#F59E0B" />
+										<stop offset="65%" stopColor="#10B981" />
+									</linearGradient>
+								</defs>
+								<circle
+									cx="90"
+									cy="90"
+									r="80"
+									fill="transparent"
+									stroke="#1F1F1F"
+									strokeWidth="4"
+								/>
+								<circle
+									cx="90"
+									cy="90"
+									r="80"
+									fill="transparent"
+									stroke="url(#scoreGradient)"
+									strokeWidth="4"
+									strokeDasharray={`${2 * Math.PI * 80}`}
+									strokeDashoffset={`${2 * Math.PI * 80 * (1 - resultData.score / 10)}`}
+								/>
+							</svg>
+							<div className="absolute inset-0 flex flex-col items-center justify-center">
+								<span className="text-4xl font-bold text-accent-amber">
+									{resultData.score}
+								</span>
+								<span className="text-sm text-text-tertiary">/10</span>
+							</div>
+						</div>
+
+						{/* Roast Summary */}
+						<div className="flex-1 space-y-4">
+							{/* Badge */}
+							<div className="flex items-center gap-2">
+								<div className="w-2 h-2 rounded-full bg-red-accent" />
+								<span className="text-red-accent font-mono text-sm">
+									verdict: {resultData.verdict}
+								</span>
+							</div>
+
+							{/* Roast Title */}
+							<h2 className="text-text-primary font-mono text-xl leading-relaxed">
+								{resultData.roast}
+							</h2>
+
+							{/* Meta */}
+							<div className="flex items-center gap-4">
+								<span className="text-text-tertiary font-mono text-xs">
+									lang: {resultData.language}
+								</span>
+								<span className="text-text-tertiary">·</span>
+								<span className="text-text-tertiary font-mono text-xs">
+									{resultData.lines} lines
+								</span>
+							</div>
+
+							{/* Share Buttons */}
+							<div className="flex items-center gap-3">
+								<button className="flex items-center gap-2 px-4 py-2 border border-border-primary rounded hover:bg-bg-surface transition-colors">
+									<span className="text-text-secondary font-mono text-xs">
+										share
+									</span>
+								</button>
+								<button className="flex items-center gap-2 px-4 py-2 border border-border-primary rounded hover:bg-bg-surface transition-colors">
+									<span className="text-text-secondary font-mono text-xs">
+										copy
+									</span>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					{/* Divider */}
+					<div className="w-full h-px bg-border-primary" />
+
+					{/* Submitted Code Section */}
+					<div className="space-y-4">
+						{/* Title */}
+						<div className="flex items-center gap-2">
+							<span className="text-accent-green font-mono text-sm font-bold">
+								{"//"}
+							</span>
+							<span className="text-text-primary font-mono text-sm font-bold">
+								your_submission
+							</span>
+						</div>
+
+						{/* Code Preview */}
+						<div className="bg-bg-input border border-border-primary rounded overflow-hidden">
+							<div className="flex">
+								{/* Line Numbers */}
+								<div className="w-12 bg-bg-surface border-r border-border-primary p-3 flex flex-col gap-2 text-right">
+									{Array.from({ length: resultData.lines }, (_, i) => (
+										<span
+											key={i}
+											className="text-text-tertiary font-mono text-xs leading-5"
+										>
+											{i + 1}
+										</span>
+									))}
+								</div>
+
+								{/* Code Content */}
+								<div className="flex-1 p-3 overflow-x-auto">
+									<pre className="text-xs leading-5 whitespace-pre">
+										<code className="text-text-primary">{resultData.code}</code>
+									</pre>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{/* Divider */}
+					<div className="w-full h-px bg-border-primary" />
+
+					{/* Analysis Section */}
+					<div className="space-y-6">
+						{/* Title */}
+						<div className="flex items-center gap-2">
+							<span className="text-accent-green font-mono text-sm font-bold">
+								{"//"}
+							</span>
+							<span className="text-text-primary font-mono text-sm font-bold">
+								detailed_analysis
+							</span>
+						</div>
+
+						{/* Issues Grid */}
+						<div className="grid grid-cols-2 gap-5">
+							{resultData.issues.map((issue, index) => (
+								<div
+									key={index}
+									className="p-5 border border-border-primary rounded space-y-2"
+								>
+									<div className="flex items-center gap-2">
+										<div
+											className={`w-2 h-2 rounded-full ${
+												issue.color === "text-red-accent"
+													? "bg-red-accent"
+													: issue.color === "text-orange-accent"
+														? "bg-orange-accent"
+														: issue.color === "text-yellow-accent"
+															? "bg-yellow-accent"
+															: "bg-green-accent"
+											}`}
+										/>
+										<span
+											className={`${issue.color} font-mono text-xs font-medium`}
+										>
+											{issue.title}
+										</span>
+									</div>
+									<p className="text-text-secondary font-mono text-xs">
+										{issue.description}
+									</p>
+								</div>
+							))}
+						</div>
+					</div>
+
+					{/* Divider */}
+					<div className="w-full h-px bg-border-primary" />
+
+					{/* Diff Section */}
+					<div className="space-y-6">
+						{/* Title */}
+						<div className="flex items-center gap-2">
+							<span className="text-accent-green font-mono text-sm font-bold">
+								{"//"}
+							</span>
+							<span className="text-text-primary font-mono text-sm font-bold">
+								suggested_fix
+							</span>
+						</div>
+
+						{/* Diff Block */}
+						<div className="bg-bg-input border border-border-primary rounded">
+							{/* Header */}
+							<div className="h-10 flex items-center px-4 border-b border-border-primary">
+								<span className="text-text-secondary font-mono text-xs">
+									{resultData.diff.original} → {resultData.diff.improved}
+								</span>
+							</div>
+
+							{/* Diff Body */}
+							<div className="py-1">
+								{resultData.diff.lines.map((line, index) => {
+									const bgColor =
+										line.type === "remove"
+											? "bg-[#EF444415]"
+											: line.type === "add"
+												? "bg-[#10B98115]"
+												: "";
+									return (
+										<div
+											key={index}
+											className={`h-7 flex items-center px-4 ${bgColor}`}
+										>
+											<span className="text-xs text-text-primary">
+												{line.content}
+											</span>
+										</div>
+									);
+								})}
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+	);
+}
