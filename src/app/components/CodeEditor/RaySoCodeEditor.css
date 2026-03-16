@@ -1,0 +1,97 @@
+/* Custom CSS to break text and override highlight.js defaults */
+.hljs {
+	white-space: pre-wrap !important;
+	word-break: break-word !important;
+	overflow-wrap: break-word !important;
+}
+
+pre.hljs {
+	white-space: pre-wrap !important;
+	word-break: break-word !important;
+	overflow-wrap: break-word !important;
+}
+
+/* Cores mais saturadas para o syntax highlighting - estilo Ray.so */
+.hljs {
+	color: #e6e6e6 !important;
+	background: #282c34 !important;
+}
+
+.hljs-comment,
+.hljs-quote {
+	color: #7f848e !important;
+	font-style: italic !important;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+	color: #c678dd !important;
+	font-weight: bold !important;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable {
+	color: #d19a66 !important;
+}
+
+.hljs-string,
+.hljs-doctag {
+	color: #98c379 !important;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+	color: #e5c07b !important;
+	font-weight: bold !important;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+	color: #e5c07b !important;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+	color: #e06c75 !important;
+	font-weight: normal !important;
+}
+
+.hljs-regexp,
+.hljs-link {
+	color: #56b6c2 !important;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+	color: #e06c75 !important;
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+	color: #61afef !important;
+}
+
+.hljs-meta {
+	color: #abb2bf !important;
+}
+
+.hljs-deletion {
+	background: #e06c75 !important;
+}
+
+.hljs-addition {
+	background: #98c379 !important;
+}
+
+.hljs-emphasis {
+	font-style: italic !important;
+}
+
+.hljs-strong {
+	font-weight: bold !important;
+}
