@@ -2,26 +2,15 @@
 
 import { trpc } from "@/lib/trpc-client";
 import { MetricsDisplay } from "./MetricsDisplay";
-import { MetricsSkeleton } from "./MetricsSkeleton";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-
-function MetricsContent() {
-  const { data, isLoading, error } = trpc.metrics.useQuery();
-
-  if (isLoading) return <MetricsSkeleton />;
-  if (error) return <div>Error loading metrics</div>;
-  if (!data) return <MetricsSkeleton />;
-
-  return <MetricsDisplay roastedCodesCount={data.roastedCodesCount} avgScore={data.avgScore} />;
-}
 
 export function MetricsContainer() {
-  return (
-    <ErrorBoundary fallback={<div>Error loading metrics</div>}>
-      <Suspense fallback={<MetricsSkeleton />}>
-        <MetricsContent />
-      </Suspense>
-    </ErrorBoundary>
-  );
+  const { data, isLoading, error } = trpc.metrics.useQuery();
+
+  // Use 0 as initial value for NumberFlow animation
+  const roastedCodesCount = data?.roastedCodesCount ?? 0;
+  const avgScore = data?.avgScore ?? 0;
+
+  if (error) return <div>Error loading metrics</div>;
+
+  return <MetricsDisplay roastedCodesCount={roastedCodesCount} avgScore={avgScore} />;
 }
