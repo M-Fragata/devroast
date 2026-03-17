@@ -19,10 +19,14 @@ function getBaseUrl() {
 }
 
 export function getTrpcClient() {
+  const url = `${getBaseUrl()}/api/trpc`;
+  if (typeof window !== "undefined") {
+    console.log("tRPC Client URL:", url);
+  }
   return trpc.createClient({
     links: [
       httpBatchLink({
-        url: `${getBaseUrl()}/api/trpc`,
+        url,
         transformer: superjson,
       }),
     ],

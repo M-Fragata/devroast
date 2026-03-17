@@ -1,104 +1,46 @@
 import { RaySoCodeEditor } from "@/app/components/CodeEditor/RaySoCodeEditor";
 import { MetricsContainer } from "@/app/components/MetricsContainer";
+import { Suspense } from "react";
+import ShameLeaderboard from "@/app/components/ShameLeaderboard";
+import ShameLeaderboardSkeleton from "@/app/components/ShameLeaderboardSkeleton";
+import FooterMetrics from "@/app/components/FooterMetrics";
 
 export default function HomePage() {
-	return (
-		<div className="min-h-screen bg-bg-page text-foreground font-mono">
+  return (
+    <div className="min-h-screen bg-bg-page text-foreground font-mono">
+      {/* Main Content */}
+      <main className="flex flex-col items-center py-6 md:py-10 px-4 md:px-10 space-y-6 md:space-y-10">
+        {/* Hero Section */}
+        <div className="flex flex-col items-center gap-2 md:gap-3 text-center max-w-2xl w-full">
+          <div className="flex items-center gap-2 md:gap-3 flex-wrap justify-center">
+            <span className="text-accent-green text-2xl md:text-4xl font-bold">$</span>
+            <h1 className="text-foreground text-xl md:text-4xl font-bold">
+              paste your code. get roasted.
+            </h1>
+          </div>
+          <p className="text-text-secondary text-sm md:text-base font-normal">
+            {'//'} drop your code below and we{"'"}ll rate it — brutally honest or full roast mode
+          </p>
+        </div>
 
-			{/* Main Content */}
-			<main className="flex flex-col items-center py-6 md:py-10 px-4 md:px-10 space-y-6 md:space-y-10">
-				{/* Hero Section */}
-				<div className="flex flex-col items-center gap-2 md:gap-3 text-center max-w-2xl w-full">
-				<div className="flex items-center gap-2 md:gap-3 flex-wrap justify-center">
-					<span className="text-accent-green text-2xl md:text-4xl font-bold">$</span>
-					<h1 className="text-foreground text-xl md:text-4xl font-bold">
-						paste your code. get roasted.
-					</h1>
-				</div>
-				<p className="text-text-secondary text-sm md:text-base font-normal">
-					{'//'} drop your code below and we{"'"}ll rate it — brutally honest or full roast mode
-				</p>
-				</div>
+        {/* Code Editor Window - RESPONSIVE */}
+        <RaySoCodeEditor />
 
-				{/* Code Editor Window - RESPONSIVE */}
-				<RaySoCodeEditor />
+        {/* Footer Stats */}
+        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-text-tertiary text-xs md:text-sm">
+          <Suspense fallback={<div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />}>
+            <FooterMetrics />
+          </Suspense>
+        </div>
 
-				{/* Footer Stats */}
-				<div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-text-tertiary text-xs md:text-sm">
-					<MetricsContainer />
-				</div>
+        {/* Spacer */}
+        <div className="h-8 md:h-[60px]" />
 
-				{/* Spacer */}
-				<div className="h-8 md:h-[60px]" />
-
-				{/* Leaderboard Preview Section - RESPONSIVE */}
-				<div className="w-full max-w-[960px] space-y-4 px-0 md:px-0">
-					{/* Title Row */}
-					<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-4 md:px-0">
-						<div className="flex items-center gap-2">
-							<span className="text-accent-green font-bold">{'//'}</span>
-							<span className="text-foreground font-bold">shame_leaderboard</span>
-						</div>
-						<div className="flex items-center gap-1 px-3 py-1 border border-border-primary">
-							<span className="text-text-secondary text-xs">$ view_all &gt;</span>
-						</div>
-					</div>
-					<p className="text-text-tertiary text-xs md:text-sm px-4 md:px-0">
-						{'//'} the worst code on the internet, ranked by shame
-					</p>
-
-					{/* Table - Scrollable on mobile */}
-					<div className="border border-border-primary overflow-x-auto">
-						{/* Table Header */}
-						<div className="h-10 flex items-center px-4 md:px-5 bg-bg-surface border-b border-border-primary min-w-[500px]">
-							<div className="w-10 md:w-[50px] text-text-tertiary text-xs font-medium">#</div>
-							<div className="w-12 md:w-[70px] text-text-tertiary text-xs font-medium">score</div>
-							<div className="flex-1 text-text-tertiary text-xs font-medium">code</div>
-							<div className="w-16 md:w-[100px] text-text-tertiary text-xs font-medium">lang</div>
-						</div>
-
-						{/* Row 1 */}
-						<div className="flex items-center px-4 md:px-5 py-3 md:py-4 border-b border-border-primary min-w-[500px]">
-							<div className="w-10 md:w-[50px] text-accent-amber text-xs">1</div>
-							<div className="w-12 md:w-[70px] text-red-accent text-xs font-bold">1.2</div>
-							<div className="flex-1 flex flex-col gap-1">
-								<span className="text-foreground text-xs">eval(prompt(&quot;enter code&quot;))</span>
-								<span className="text-foreground text-xs">document.write(response)</span>
-								<span className="text-[#8B8B8B] text-xs">{'//'} trust the user lol</span>
-							</div>
-							<div className="w-16 md:w-[100px] text-text-secondary text-xs">javascript</div>
-						</div>
-
-						{/* Row 2 */}
-						<div className="flex items-center px-4 md:px-5 py-3 md:py-4 border-b border-border-primary min-w-[500px]">
-							<div className="w-10 md:w-[50px] text-text-secondary text-xs">2</div>
-							<div className="w-12 md:w-[70px] text-red-accent text-xs font-bold">1.8</div>
-							<div className="flex-1 flex flex-col gap-1">
-								<span className="text-foreground text-xs">if (x == true) &lbrace; return true; &rbrace;</span>
-								<span className="text-foreground text-xs">else if (x == false) &lbrace; return false; &rbrace;</span>
-								<span className="text-foreground text-xs">else &lbrace; return !false; &rbrace;</span>
-							</div>
-							<div className="w-16 md:w-[100px] text-text-secondary text-xs">typescript</div>
-						</div>
-
-						{/* Row 3 */}
-						<div className="flex items-center px-4 md:px-5 py-3 md:py-4 min-w-[500px]">
-							<div className="w-10 md:w-[50px] text-text-secondary text-xs">3</div>
-							<div className="w-12 md:w-[70px] text-red-accent text-xs font-bold">2.1</div>
-							<div className="flex-1 flex flex-col gap-1">
-								<span className="text-foreground text-xs">SELECT * FROM users WHERE 1=1</span>
-								<span className="text-[#8B8B8B] text-xs">{'--'} TODO: add authentication</span>
-							</div>
-							<div className="w-16 md:w-[100px] text-text-secondary text-xs">sql</div>
-						</div>
-					</div>
-
-					{/* Fade Hint */}
-					<div className="text-center py-3 md:py-4 text-text-tertiary text-xs md:text-sm px-4">
-						showing top 3 of 2,847 · view full leaderboard &gt;
-					</div>
-				</div>
-			</main>
-		</div>
-	);
+        {/* Shame Leaderboard Section - RESPONSIVE with Suspense */}
+        <Suspense fallback={<ShameLeaderboardSkeleton />}>
+          <ShameLeaderboard />
+        </Suspense>
+      </main>
+    </div>
+  );
 }
