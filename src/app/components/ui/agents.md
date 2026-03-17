@@ -1,6 +1,6 @@
 # Padrões de Criação de Componentes UI
 
-Este documento descreve os padrões e convenções a serem seguidos ao criar componentes na pasta `src/components/ui`.
+Este documento descreve os padrões e convenções a serem seguidos ao criar componentes na pasta `src/app/components/ui`.
 
 ## Dependências
 
@@ -12,7 +12,7 @@ Todos os componentes devem utilizar as seguintes dependências para estilizaçã
 
 ## Estrutura do Componente
 
-1.  **Arquivo**: O componente deve ser um arquivo `.tsx` dentro de `src/components/ui/`.
+1.  **Arquivo**: O componente deve ser um arquivo `.tsx` dentro de `src/app/components/ui/`.
 2.  **Named Exports**: Nunca use default exports. Exporte a função do componente e sua interface de props explicitamente.
     ```typescript
     export function Button({ ... }: ButtonProps) { ... }
@@ -89,7 +89,7 @@ export function Component({
 ## Exemplos de Uso
 
 ```tsx
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 
 <Button variant="submit" size="submit">
   Enviar

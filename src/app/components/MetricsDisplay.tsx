@@ -22,12 +22,14 @@ export function MetricsDisplay({
         <p className="text-sm text-muted-foreground">Roasted Codes</p>
       </div>
       <div className="text-center">
-        <NumberFlow
-          value={avgScore}
-          className="text-4xl font-bold"
-          format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-          spinTiming={{ duration: 1000 }}
-        />
+        <div className="text-4xl font-bold flex items-center justify-center gap-1">
+          <NumberFlow
+            value={avgScore}
+            format={{ minimumFractionDigits: 1, maximumFractionDigits: 1 }}
+            spinTiming={{ duration: 1000 }}
+          />
+          <span className="text-xl text-muted-foreground">/10</span>
+        </div>
         <p className="text-sm text-muted-foreground">Avg Score</p>
       </div>
     </div>

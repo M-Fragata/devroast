@@ -7,7 +7,8 @@ export const trpc = createTRPCReact<AppRouter>();
 
 function getBaseUrl() {
   if (typeof window !== "undefined") {
-    return "";
+    // Use the current origin for client-side requests
+    return window.location.origin;
   }
   // reference for vercel.com
   if (process.env.VERCEL_URL) {

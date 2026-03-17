@@ -10,7 +10,9 @@ export function MetricsContainer() {
   const roastedCodesCount = data?.roastedCodesCount ?? 0;
   const avgScore = data?.avgScore ?? 0;
 
-  if (error) return <div>Error loading metrics</div>;
+  if (error) {
+    return <div>Error loading metrics: {error.message}</div>;
+  }
 
   return <MetricsDisplay roastedCodesCount={roastedCodesCount} avgScore={avgScore} />;
 }
