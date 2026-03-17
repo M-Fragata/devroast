@@ -38,6 +38,7 @@ export function LeaderboardRow({
 
 	// Highlight code using highlight.js
 	const [highlightedCode, setHighlightedCode] = useState("");
+	const [isExpanded, setIsExpanded] = useState(false);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
@@ -132,7 +133,9 @@ export function LeaderboardRow({
 			</div>
 
 			{/* Code Area with line numbers */}
-			<div className="flex bg-[#282c34] border-x border-[#2A2A2A] h-[180px] overflow-hidden">
+			<div
+				className={`flex bg-[#282c34] border-x border-[#2A2A2A] ${isExpanded ? "h-auto" : "h-[180px]"} overflow-hidden`}
+			>
 				{/* Line Numbers Column */}
 				<div
 					ref={lineNumbersRef}
@@ -177,6 +180,16 @@ export function LeaderboardRow({
 					</pre>
 				</div>
 			</div>
+
+			{/* Expand/Collapse Button */}
+			{lineCount > 3 && (
+				<button
+					onClick={() => setIsExpanded(!isExpanded)}
+					className="w-full py-2 text-xs text-accent-green hover:text-accent-green-hover cursor-pointer border-t border-[#2A2A2A] bg-[#111111]"
+				>
+					{isExpanded ? "ver menos ↑" : "ver mais ↓"}
+				</button>
+			)}
 		</div>
 	);
 }
