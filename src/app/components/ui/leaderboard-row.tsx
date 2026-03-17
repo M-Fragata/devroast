@@ -2,7 +2,7 @@
 
 import hljs from "highlight.js";
 import parse from "html-react-parser";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { tv } from "tailwind-variants";
 import { detectLanguage } from "../CodeEditor/language-detection";
 
@@ -76,30 +76,6 @@ export function LeaderboardRow({
 	const codeLines = code.split("\n");
 	const lineCount = lines || codeLines.length;
 
-	// Refs for scroll synchronization
-	const lineNumbersRef = useRef<HTMLDivElement>(null);
-	const codeContentRef = useRef<HTMLDivElement>(null);
-	const syncScrollRef = useRef(false);
-
-	// Sync scroll between line numbers and code
-	const handleScroll = (source: "lines" | "code") => {
-		if (syncScrollRef.current) return;
-
-		syncScrollRef.current = true;
-
-		if (source === "code" && codeContentRef.current && lineNumbersRef.current) {
-			lineNumbersRef.current.scrollTop = codeContentRef.current.scrollTop;
-		} else if (
-			source === "lines" &&
-			lineNumbersRef.current &&
-			codeContentRef.current
-		) {
-			codeContentRef.current.scrollTop = lineNumbersRef.current.scrollTop;
-		}
-
-		syncScrollRef.current = false;
-	};
-
 	return (
 		<div className={entryVariants()}>
 			{/* Header Bar */}
@@ -134,14 +110,10 @@ export function LeaderboardRow({
 
 			{/* Code Area with line numbers */}
 			<div
-				className={`flex bg-[#282c34] border-x border-[#2A2A2A] ${isExpanded ? "h-auto" : "h-[180px]"} overflow-hidden`}
+				className={`flex bg-[#282c34] border-x border-[#2A2A2A] ${isExpanded ? "h-auto" : "h-[60px]"} overflow-hidden`}
 			>
 				{/* Line Numbers Column */}
-				<div
-					ref={lineNumbersRef}
-					className="w-10 bg-[#21252b] border-r border-[#2A2A2A] flex flex-col py-3 px-2 overflow-y-auto"
-					onScroll={() => handleScroll("lines")}
-				>
+				<div className="w-10 bg-[#21252b] border-r border-[#2A2A2A] flex flex-col py-3 px-2">
 					{Array.from({ length: lineCount }, (_, i) => (
 						<span
 							key={i}
@@ -153,11 +125,7 @@ export function LeaderboardRow({
 				</div>
 
 				{/* Code Content */}
-				<div
-					ref={codeContentRef}
-					className="flex-1 overflow-y-auto overflow-x-hidden p-3 -mt-[13px]"
-					onScroll={() => handleScroll("code")}
-				>
+				<div className="flex-1 overflow-hidden p-3 -mt-[13px]">
 					<pre
 						className="m-0 p-0 bg-[#282c34] whitespace-pre-wrap word-break-break-all"
 						style={{
@@ -182,14 +150,12 @@ export function LeaderboardRow({
 			</div>
 
 			{/* Expand/Collapse Button */}
-			{lineCount > 3 && (
-				<button
-					onClick={() => setIsExpanded(!isExpanded)}
-					className="w-full py-2 text-xs text-accent-green hover:text-accent-green-hover cursor-pointer border-t border-[#2A2A2A] bg-[#111111]"
-				>
-					{isExpanded ? "ver menos ↑" : "ver mais ↓"}
-				</button>
-			)}
+			<button
+				onClick={() => setIsExpanded(!isExpanded)}
+				className="w-full py-2 text-xs text-accent-green hover:text-accent-green-hover cursor-pointer border-t border-[#2A2A2A] bg-[#111111]"
+			>
+				{isExpanded ? "ver menos ↑" : "ver mais ↓"}
+			</button>
 		</div>
 	);
 }
