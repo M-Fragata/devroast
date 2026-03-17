@@ -33,21 +33,21 @@ export default function ShameLeaderboardSkeleton() {
           >
             {/* Rank Skeleton */}
             <div className="w-10 md:w-[50px]">
-              <div className="h-4 w-4 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-4 bg-bg-surface rounded animate-pulse" />
             </div>
             {/* Score Skeleton */}
             <div className="w-12 md:w-[70px]">
-              <div className="h-4 w-8 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-8 bg-bg-surface rounded animate-pulse" />
             </div>
             {/* Code Skeleton */}
             <div className="flex-1 flex flex-col gap-1">
-              <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
-              <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
-              <div className="h-4 w-1/2 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-full bg-bg-surface rounded animate-pulse" />
+              <div className="h-4 w-3/4 bg-bg-surface rounded animate-pulse" />
+              <div className="h-4 w-1/2 bg-bg-surface rounded animate-pulse" />
             </div>
             {/* Language Skeleton */}
             <div className="w-16 md:w-[100px]">
-              <div className="h-4 w-12 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-12 bg-bg-surface rounded animate-pulse" />
             </div>
           </div>
         ))}
@@ -55,7 +55,7 @@ export default function ShameLeaderboardSkeleton() {
 
       {/* Footer Skeleton */}
       <div className="text-center py-3 md:py-4 text-text-tertiary text-xs md:text-sm px-4">
-        <div className="h-4 w-48 mx-auto bg-gray-200 rounded animate-pulse" />
+        <div className="h-4 w-48 mx-auto bg-bg-surface rounded animate-pulse" />
       </div>
     </div>
   );
