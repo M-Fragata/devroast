@@ -46,10 +46,17 @@ The page will:
 3. Include hero section and footer similar to current implementation
 
 **Update LeaderboardRow** (`src/app/components/ui/leaderboard-row.tsx`):
-- Import and use `CodeDisplay` component for code rendering
-- Keep existing header layout (rank, score, language, lines)
-- Add expand/collapse functionality using CodeDisplay's built-in mechanism
-- Maintain line numbers support
+- **Keep existing line numbers and scroll sync** - The current implementation has these features which should be preserved
+- **Add expand/collapse functionality similar to CodeDisplay** - Implement the truncation logic and "ver mais/ver menos" buttons directly in LeaderboardRow
+- **Modify the code area height** - Change from fixed 180px to conditional (truncated vs expanded) similar to CodeDisplay's approach
+- **Keep existing header layout** (rank, score, language, lines)
+
+**Implementation approach**:
+- Add `isExpanded` state to track expansion state
+- Use `maxHeight` style similar to CodeDisplay: `maxHeight: isExpanded ? "none" : "${maxLines * 1.5}em"`
+- Add expand/collapse button below the code area
+- Keep line numbers column and scroll sync logic intact
+- The component will handle its own code highlighting (already using hljs)
 
 ### Components
 
@@ -64,12 +71,16 @@ interface LeaderboardRowProps {
 }
 ```
 
-#### CodeDisplay Usage
-The `CodeDisplay` component already provides:
-- Syntax highlighting with `highlight.js`
+#### CodeDisplay Pattern
+The `CodeDisplay` component provides a reference pattern for:
 - Expand/collapse "ver mais/ver menos" functionality
 - Truncation logic based on line count
-- Responsive styling
+- Conditional maxHeight styling
+
+**Note**: LeaderboardRow will implement similar functionality but maintain its own:
+- Line numbers column
+- Scroll synchronization between line numbers and code
+- Custom syntax highlighting with hljs
 
 ## Implementation Details
 
@@ -94,8 +105,8 @@ const data = await db
 LeaderboardPage (Server Component)
   → trpc.leaderboard.useQuery() (Client Component)
   → LeaderboardRow (Client Component)
-  → CodeDisplay (Client Component)
-  → Syntax Highlighting + Expand/Collapse
+  → Syntax Highlighting + Expand/Collapse (built into LeaderboardRow)
+  → Line Numbers + Scroll Sync (built into LeaderboardRow)
 ```
 
 ## UI Components
