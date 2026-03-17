@@ -51,9 +51,11 @@ npx drizzle-kit push
 - [ ] **Step 4: Commit**
 
 ```bash
-git add src/db/schema/roasts.ts .env.local
+git add src/db/schema/roasts.ts
 git commit -m "feat: add analysisJson column to roasts table"
 ```
+
+**Note:** Do NOT commit .env.local - add it to .gitignore if not already there.
 
 ---
 
@@ -397,35 +399,22 @@ git commit -m "feat: connect RaySoCodeEditor to tRPC roast.create"
 - [ ] **Step 1: Create dynamic result page**
 
 ```tsx
-import type { Metadata } from "next";
-import { trpc } from "@/lib/trpc-client";
-import { CodeBlock } from "@/app/components/ui/code-block";
-
-export const dynamic = "force-dynamic";
-
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  return {
-    title: "Result - DevRoast",
-    description: "Your roast result",
-  };
-}
-
-export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const roastId = parseInt(id);
-  
-  // For now, we'll fetch on client side since we need to use tRPC
-  // This will be replaced with proper server-side fetching
-  
-  return (
-    <ResultContent roastId={roastId} />
-  );
-}
-
 "use client";
 
 import { trpc } from "@/lib/trpc-client";
+import { CodeBlock } from "@/app/components/ui/code-block";
 import { use } from "react";
+
+interface ResultPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function ResultPage({ params }: ResultPageProps) {
+  const { id } = use(params);
+  const roastId = parseInt(id);
+  
+  return <ResultContent roastId={roastId} />;
+}
 
 function ResultContent({ roastId }: { roastId: number }) {
   const { data, isLoading, error } = trpc.roast.getById.useQuery(roastId);
