@@ -43,7 +43,13 @@ RaySoCodeEditor (homepage)
 - id, content, mood, snippetId, createdAt, updatedAt
 
 **leaderboardEntries table** (existing):
-- After creating roast, calculate score and add entry to leaderboard
+- id, snippetId, score, period, rank, createdAt, updatedAt
+
+**Note:** The existing schema stores only basic data. For the result page to display full analysis (score, verdict, issues, diff), we have two options:
+1. Add columns to `roasts` table for full JSON storage
+2. Return analysis data directly from the create mutation and store in session/URL
+
+For simplicity, we'll return the full analysis from the create mutation and pass it to the result page via a temporary solution (URL params or fetch by ID with stored analysis).
 
 ## Backend Implementation
 
@@ -62,17 +68,44 @@ roast: router({
       mood: z.enum(['serious', 'roast']),
     }))
     .mutation(async ({ input }) => {
-      // 1. Save snippet
-      // 2. Call Gemini API
-      // 3. Save roast
+      // 1. Call Gemini API to get analysis
+      const analysis = await callGeminiAPI(input.code, input.language, input.mood);
+      
+      // 2. Save snippet with required fields derived from Gemini response
+      const [snippet] = await db.insert(snippets).values({
+        title: input.code.split('\n')[0].slice(0, 100) || 'Untitled',
+        content: input.code,
+        language: input.language,
+        status: mapVerdictToStatus(analysis.verdict),
+        evaluation: analysis.verdict,
+      }).returning();
+      
+      // 3. Save roast with full analysis as JSON
+      const [roast] = await db.insert(roasts).values({
+        content: analysis.roast,
+        mood: input.mood,
+        snippetId: snippet.id,
+        // Store full analysis - requires adding column or using alternative storage
+        analysisJson: JSON.stringify(analysis), 
+      }).returning();
+      
       // 4. Save to leaderboard
-      // 5. Return {roastId, snippetId}
+      const currentPeriod = new Date().toISOString().slice(0, 7);
+      await db.insert(leaderboardEntries).values({
+        snippetId: snippet.id,
+        score: analysis.score,
+        period: currentPeriod,
+        rank: 0,
+      });
+      
+      return { roastId: roast.id, analysis };
     }),
   
   getById: publicProcedure
-    .input(z.number())
+    .input(z.number().int())
     .query(async ({ input }) => {
-      // Fetch roast with snippet data
+      const roastData = await db.select().from(roasts)...
+      return JSON.parse(roastData.analysisJson);
     }),
 }),
 ```
@@ -179,7 +212,7 @@ ${code}
 
 Add to `.env.local`:
 ```
-GEMINI_API_KEY=AIzaSyCKyTgNCNDb3ZgHy-lXe0oJkX-GheL7xSM
+GEMINI_API_KEY=your-api-key-here
 ```
 
-Note: This is the key provided by the user.
+**Note:** Store your Gemini API key in the environment variable. Never commit keys to version control.
