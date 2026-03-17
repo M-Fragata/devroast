@@ -1,8 +1,8 @@
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { LeaderboardContainer } from "@/app/components/LeaderboardContainer";
-import { getQueryClient } from "@/lib/query-client";
-import { trpc } from "@/lib/trpc-client";
+import { db } from "@/db";
+import { leaderboardEntries, snippets } from "@/db/schema";
 
 export const dynamic = "force-dynamic";
 
@@ -11,13 +11,33 @@ export const metadata: Metadata = {
 	description: "The worst code on the internet, ranked by shame",
 };
 
-export default async function LeaderboardPage() {
-	const queryClient = getQueryClient();
+async function getLeaderboardData() {
+	try {
+		const data = await db
+			.select({
+				rank: leaderboardEntries.rank,
+				score: leaderboardEntries.score,
+				code: snippets.content,
+				language: snippets.language,
+				snippetId: leaderboardEntries.snippetId,
+			})
+			.from(leaderboardEntries)
+			.innerJoin(snippets, eq(leaderboardEntries.snippetId, snippets.id))
+			.orderBy(leaderboardEntries.score)
+			.limit(20);
 
-	await queryClient.prefetchQuery({
-		queryKey: ["leaderboard"],
-		queryFn: () => trpc.leaderboard.query(),
-	});
+		return data.map((entry) => ({
+			...entry,
+			lines: entry.code.split("\n").length,
+		}));
+	} catch (error) {
+		console.error("Failed to fetch leaderboard:", error);
+		return [];
+	}
+}
+
+export default async function LeaderboardPage() {
+	const leaderboardData = await getLeaderboardData();
 
 	return (
 		<div className="min-h-screen bg-bg-page text-foreground font-mono">
@@ -39,9 +59,7 @@ export default async function LeaderboardPage() {
 				</div>
 
 				{/* Leaderboard Entries */}
-				<HydrationBoundary state={dehydrate(queryClient)}>
-					<LeaderboardContainer />
-				</HydrationBoundary>
+				<LeaderboardContainer initialData={leaderboardData} />
 			</main>
 		</div>
 	);

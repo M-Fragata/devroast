@@ -3,10 +3,29 @@
 import { LeaderboardRow } from "@/app/components/ui/leaderboard-row";
 import { trpc } from "@/lib/trpc-client";
 
-export function LeaderboardContainer() {
-	const { data, isLoading, error } = trpc.leaderboard.useQuery();
+interface LeaderboardEntry {
+	rank: number;
+	score: number;
+	code: string;
+	language: string;
+	snippetId: number;
+	lines: number;
+}
 
-	if (isLoading) {
+interface LeaderboardContainerProps {
+	initialData?: LeaderboardEntry[];
+}
+
+export function LeaderboardContainer({
+	initialData,
+}: LeaderboardContainerProps) {
+	const { data, isLoading, error } = trpc.leaderboard.useQuery(undefined, {
+		enabled: !initialData,
+	});
+
+	const entries = initialData ?? data;
+
+	if (!initialData && isLoading) {
 		return (
 			<div className="w-full max-w-[960px] space-y-5 px-0 md:px-0">
 				<div className="text-center py-10 text-text-secondary">
@@ -16,7 +35,7 @@ export function LeaderboardContainer() {
 		);
 	}
 
-	if (error) {
+	if (!initialData && error) {
 		return (
 			<div className="w-full max-w-[960px] space-y-5 px-0 md:px-0">
 				<div className="text-center py-10 text-text-secondary">
@@ -28,8 +47,8 @@ export function LeaderboardContainer() {
 
 	return (
 		<div className="w-full max-w-[960px] space-y-5 px-0 md:px-0">
-			{data && data.length > 0 ? (
-				data.map((entry) => (
+			{entries && entries.length > 0 ? (
+				entries.map((entry) => (
 					<LeaderboardRow
 						key={entry.snippetId}
 						rank={entry.rank}
@@ -47,7 +66,7 @@ export function LeaderboardContainer() {
 
 			{/* Footer */}
 			<div className="text-center py-3 md:py-4 text-text-tertiary text-xs md:text-sm px-4">
-				showing top {data?.length ?? 0} · view full leaderboard &gt;
+				showing top {entries?.length ?? 0} · view full leaderboard &gt;
 			</div>
 		</div>
 	);
