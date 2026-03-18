@@ -16,12 +16,14 @@ interface RaySoCodeEditorProps {
 	initialCode?: string;
 	initialLanguage?: Language;
 	onChange?: (code: string, language: Language) => void;
+	onSubmit?: (code: string, language: Language, mood: boolean) => void;
 }
 
 export function RaySoCodeEditor({
 	initialCode = "",
 	initialLanguage,
 	onChange,
+	onSubmit,
 }: RaySoCodeEditorProps) {
 	const [code, setCode] = useState(initialCode);
 	const [language, setLanguage] = useState<Language>(
@@ -127,6 +129,13 @@ export function RaySoCodeEditor({
 	// Toggle roast mode
 	const toggleRoastMode = () => {
 		setRoastMode(!roastMode);
+	};
+
+	// Handle submit
+	const handleSubmit = () => {
+		if (onSubmit && code.trim()) {
+			onSubmit(code, language, roastMode);
+		}
 	};
 
 	return (
@@ -238,7 +247,8 @@ export function RaySoCodeEditor({
 						{charCount}/{MAX_CODE_LENGTH}
 					</span>
 					<button
-						disabled={charCount > MAX_CODE_LENGTH}
+						onClick={handleSubmit}
+						disabled={charCount > MAX_CODE_LENGTH || !code.trim()}
 						className="bg-[#10B981] text-[#0A0A0A] text-xs font-medium px-4 py-2 rounded cursor-pointer hover:bg-[#0D9668] transition-colors disabled:bg-[#4B5563] disabled:cursor-not-allowed disabled:text-[#6B7280]"
 					>
 						$ roast_my_code
