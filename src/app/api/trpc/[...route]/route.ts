@@ -11,4 +11,5 @@ const handler = (req: NextRequest) =>
     createContext,
   });
 
-export { handler as GET, handler as POST };
+export const GET = handler;
+export const POST = handler;

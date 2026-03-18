@@ -1,22 +1,20 @@
-import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { leaderboardEntries, snippets } from "@/db/schema";
+"use client";
 import { CodeDisplay } from "./CodeDisplay";
+import { trpc } from "@/lib/trpc-client";
 
-export default async function ShameLeaderboard() {
-	// Fetch 3 worst code snippets (lowest scores)
-	const worstSnippets = await db
-		.select({
-			rank: leaderboardEntries.rank,
-			score: leaderboardEntries.score,
-			code: snippets.content,
-			language: snippets.language,
-			snippetId: leaderboardEntries.snippetId,
-		})
-		.from(leaderboardEntries)
-		.innerJoin(snippets, eq(leaderboardEntries.snippetId, snippets.id))
-		.orderBy(leaderboardEntries.score) // Ascending order (lowest scores first)
-		.limit(3);
+export default function ShameLeaderboard() {
+	const { data: worstSnippets, isLoading } = trpc.leaderboard.useQuery();
+
+	if (isLoading) {
+		return (
+			<div className="w-full max-w-[960px] space-y-4 px-0 md:px-0">
+				<div className="h-10 bg-gray-200 animate-pulse" />
+				<div className="h-4 w-64 bg-gray-200 animate-pulse" />
+			</div>
+		);
+	}
+
+	const snippets = worstSnippets?.slice(0, 3) ?? [];
 
 	return (
 		<div className="w-full max-w-[960px] space-y-4 px-0 md:px-0">
@@ -53,11 +51,11 @@ export default async function ShameLeaderboard() {
 				</div>
 
 				{/* Table Rows */}
-				{worstSnippets.map((entry, index) => (
+				{snippets.map((entry, index) => (
 					<div
 						key={entry.snippetId}
 						className={`flex items-start px-5 py-4 ${
-							index < worstSnippets.length - 1
+							index < snippets.length - 1
 								? "border-b border-border-primary"
 								: ""
 						}`}
@@ -102,7 +100,7 @@ export default async function ShameLeaderboard() {
 
 			{/* Footer */}
 			<div className="text-center py-3 text-text-tertiary text-xs px-4">
-				showing top 3 of {worstSnippets.length} · view full leaderboard &gt;
+				showing top 3 of {snippets.length} · view full leaderboard &gt;
 			</div>
 		</div>
 	);

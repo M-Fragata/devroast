@@ -1,3 +1,5 @@
+"use server";
+
 import { db } from "@/db";
 import { leaderboardEntries, roasts, snippets } from "@/db/schema";
 import { count } from "drizzle-orm";
