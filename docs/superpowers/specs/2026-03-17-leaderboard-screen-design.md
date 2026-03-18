@@ -6,6 +6,8 @@
 ## Overview
 Implement the leaderboard screen (`/leaderboard`) with tRPC backend integration and frontend components following the existing shame leaderboard pattern from the homepage.
 
+**Note**: This spec introduces tRPC for the leaderboard as requested. The current homepage uses direct DB access with Suspense. This implementation will use tRPC + HydrationBoundary to demonstrate the pattern and enable client-side data fetching capabilities.
+
 ## Requirements
 - Fetch and display 20 leaderboard entries (no pagination)
 - Use tRPC for data fetching
@@ -21,8 +23,8 @@ Implement the leaderboard screen (`/leaderboard`) with tRPC backend integration 
 Add a new `leaderboard` procedure to the existing app router:
 ```typescript
 leaderboard: publicProcedure.query(async () => {
-  // Fetch 20 leaderboard entries with associated snippets
-  // Ordered by rank (ascending)
+  // Fetch 20 worst code entries (lowest scores)
+  // Ordered by score ascending (lowest first = worst)
 })
 ```
 
@@ -34,6 +36,7 @@ interface LeaderboardEntry {
   code: string;
   language: string;
   snippetId: number;
+  lines: number; // Calculated: code.split('\n').length
 }
 ```
 
@@ -41,14 +44,36 @@ interface LeaderboardEntry {
 **Location**: `src/app/leaderboard/page.tsx`
 
 The page will:
-1. Use `trpc.leaderboard.useQuery()` to fetch data
-2. Display 20 `LeaderboardRow` components
-3. Include hero section and footer similar to current implementation
+1. Use server-side prefetch with `queryClient.prefetchQuery()` 
+2. Use `HydrationBoundary` + `dehydrate()` pattern
+3. Create a `LeaderboardContainer` client component to consume the data via `trpc.leaderboard.useQuery()`
+4. Display 20 `LeaderboardRow` components
+5. Include hero section and footer similar to current implementation
+
+**Data Flow:**
+```
+page.tsx (Server Component)
+  → getQueryClient()
+  → queryClient.prefetchQuery({ queryKey: ['leaderboard'], queryFn: () => trpc.leaderboard.query() })
+  → <HydrationBoundary state={dehydrate(queryClient)}>
+  → LeaderboardContainer (Client Component)
+    → useQuery trpc.leaderboard (from cache)
+    → renders LeaderboardRow[]
+```
+page.tsx (Server Component)
+  → getQueryClient()
+  → queryClient.prefetchQuery({ queryKey: ['leaderboard'], queryFn: () => trpc.leaderboard.getLeaderboard.query() })
+  → <HydrationBoundary state={dehydrate(queryClient)}>
+  → LeaderboardContainer (Client Component)
+    → useQuery(trpc.leaderboard.getLeaderboard)
+    → renders LeaderboardRow[]
+```
 
 **Update LeaderboardRow** (`src/app/components/ui/leaderboard-row.tsx`):
-- **Keep existing line numbers and scroll sync** - The current implementation has these features which should be preserved
-- **Add expand/collapse functionality similar to CodeDisplay** - Implement the truncation logic and "ver mais/ver menos" buttons directly in LeaderboardRow
-- **Modify the code area height** - Change from fixed 180px to conditional (truncated vs expanded) similar to CodeDisplay's approach
+- **Keep existing line numbers and scroll sync** - The current implementation has these features which must be preserved
+- **Add expand/collapse functionality** - Implement "ver mais ↓" / "ver menos ↑" buttons
+- **Hybrid approach**: Keep line numbers column + add expand/collapse button
+- **Maintain fixed height (180px) when collapsed**, expand to full when clicked
 - **Keep existing header layout** (rank, score, language, lines)
 
 **Implementation approach**:
@@ -67,20 +92,18 @@ interface LeaderboardRowProps {
   score: number;
   code: string;
   language: string;
-  lines?: number;
+  lines?: number; // Optional - will be calculated as code.split('\n').length if not provided
 }
 ```
 
-#### CodeDisplay Pattern
-The `CodeDisplay` component provides a reference pattern for:
-- Expand/collapse "ver mais/ver menos" functionality
-- Truncation logic based on line count
-- Conditional maxHeight styling
+#### CodeDisplay Pattern (Reference Only)
+The `CodeDisplay` component provides a reference pattern for expand/collapse functionality, but we will NOT use it directly. Instead, LeaderboardRow will implement its own hybrid approach:
 
-**Note**: LeaderboardRow will implement similar functionality but maintain its own:
-- Line numbers column
-- Scroll synchronization between line numbers and code
-- Custom syntax highlighting with hljs
+- Line numbers column (existing feature - keep)
+- Scroll synchronization between line numbers and code (existing - keep)
+- Custom syntax highlighting with hljs (existing - keep)
+- Expand/collapse "ver mais/ver menos" button (NEW - add)
+- Fixed height 180px when collapsed, full height when expanded (NEW)
 
 ## Implementation Details
 
@@ -96,17 +119,20 @@ const data = await db
   })
   .from(leaderboardEntries)
   .innerJoin(snippets, eq(leaderboardEntries.snippetId, snippets.id))
-  .orderBy(leaderboardEntries.rank)
+  .orderBy(leaderboardEntries.score) // Ascending - lowest score first (worst)
   .limit(20);
 ```
 
 ### Frontend Data Flow
 ```
 LeaderboardPage (Server Component)
-  → trpc.leaderboard.useQuery() (Client Component)
-  → LeaderboardRow (Client Component)
-  → Syntax Highlighting + Expand/Collapse (built into LeaderboardRow)
-  → Line Numbers + Scroll Sync (built into LeaderboardRow)
+  → getQueryClient() 
+  → prefetchQuery trpc.leaderboard.getLeaderboard
+  → HydrationBoundary + dehydrate()
+  → LeaderboardContainer (Client Component)
+    → useQuery trpc.leaderboard.getLeaderboard (from cache)
+    → LeaderboardRow (Client Component) with expand/collapse
+    → Line Numbers + Scroll Sync (built into LeaderboardRow)
 ```
 
 ## UI Components

@@ -60,6 +60,18 @@ For simplicity, we'll return the full analysis from the create mutation and pass
 Add new `roast` router:
 
 ```typescript
+// Helper function to map verdict to status
+function mapVerdictToStatus(verdict: string): 'critical' | 'warning' | 'good' {
+  switch (verdict) {
+    case 'needs_serious_help':
+      return 'critical';
+    case 'rough_around_edges':
+      return 'warning';
+    default:
+      return 'good';
+  }
+}
+
 roast: router({
   create: publicProcedure
     .input(z.object({
@@ -85,8 +97,7 @@ roast: router({
         content: analysis.roast,
         mood: input.mood,
         snippetId: snippet.id,
-        // Store full analysis - requires adding column or using alternative storage
-        analysisJson: JSON.stringify(analysis), 
+        analysisJson: JSON.stringify(analysis),
       }).returning();
       
       // 4. Save to leaderboard
@@ -104,8 +115,28 @@ roast: router({
   getById: publicProcedure
     .input(z.number().int())
     .query(async ({ input }) => {
-      const roastData = await db.select().from(roasts)...
-      return JSON.parse(roastData.analysisJson);
+      const roastData = await db
+        .select({
+          id: roasts.id,
+          content: roasts.content,
+          mood: roasts.mood,
+          snippetId: roasts.snippetId,
+          createdAt: roasts.createdAt,
+          analysisJson: roasts.analysisJson,
+          code: snippets.content,
+          language: snippets.language,
+          title: snippets.title,
+        })
+        .from(roasts)
+        .innerJoin(snippets, eq(roasts.snippetId, snippets.id))
+        .where(eq(roasts.id, input));
+      
+      if (!roastData[0]) return null;
+      
+      return {
+        ...roastData[0],
+        ...JSON.parse(roastData[0].analysisJson || '{}'),
+      };
     }),
 }),
 ```

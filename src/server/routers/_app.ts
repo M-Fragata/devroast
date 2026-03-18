@@ -2,7 +2,7 @@ import { avg, count, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { leaderboardEntries, roasts, snippets } from "@/db/schema";
-import { generateRoast } from "@/lib/gemini";
+import { generateRoast, type RoastAnalysis } from "@/lib/gemini";
 import { publicProcedure, router } from "@/server/trpc";
 
 export const appRouter = router({
@@ -75,50 +75,72 @@ export const appRouter = router({
 						input.mood,
 					);
 
-					const [snippet] = await db
-						.insert(snippets)
-						.values({
-							title: input.code.split("\n")[0].slice(0, 100) || "Untitled",
-							content: input.code,
-							language: input.language,
-							status:
-								analysis.verdict === "needs_serious_help"
-									? "critical"
-									: analysis.verdict === "rough_around_edges"
-										? "warning"
-										: "good",
-							evaluation: analysis.verdict,
-						})
-						.returning();
-
-					const [roast] = await db
-						.insert(roasts)
-						.values({
-							content: analysis.roast,
-							mood: input.mood,
-							snippetId: snippet.id,
-							analysisJson: JSON.stringify(analysis),
-						})
-						.returning();
-
 					const currentPeriod = new Date().toISOString().slice(0, 7);
-					await db.insert(leaderboardEntries).values({
-						snippetId: snippet.id,
-						score: analysis.score,
-						period: currentPeriod,
-						rank: 0,
-					});
 
-					return { roastId: roast.id, snippetId: snippet.id };
+					return await db.transaction(async (tx) => {
+						const existingCount = await tx
+							.select({ count: count() })
+							.from(leaderboardEntries)
+							.where(eq(leaderboardEntries.period, currentPeriod));
+						const rank = (existingCount[0]?.count ?? 0) + 1;
+
+						const [snippet] = await tx
+							.insert(snippets)
+							.values({
+								title: input.code.split("\n")[0].slice(0, 100) || "Untitled",
+								content: input.code,
+								language: input.language,
+								status:
+									analysis.verdict === "needs_serious_help"
+										? "critical"
+										: analysis.verdict === "rough_around_edges"
+											? "warning"
+											: "good",
+								evaluation: analysis.verdict,
+							})
+							.returning();
+
+						const [roast] = await tx
+							.insert(roasts)
+							.values({
+								content: analysis.roast,
+								mood: input.mood,
+								snippetId: snippet.id,
+								analysisJson: JSON.stringify(analysis),
+							})
+							.returning();
+
+						await tx.insert(leaderboardEntries).values({
+							snippetId: snippet.id,
+							score: analysis.score,
+							period: currentPeriod,
+							rank,
+						});
+
+						return { roastId: roast.id, snippetId: snippet.id };
+					});
 				} catch (error) {
 					console.error("Failed to create roast:", error);
 					throw new Error("Failed to generate roast");
 				}
 			}),
 
-		getById: publicProcedure
-			.input(z.number().int())
-			.query(async ({ input }) => {
+		getById: publicProcedure.input(z.number().int()).query(
+			async ({
+				input,
+			}): Promise<
+				| ({
+						id: number;
+						content: string;
+						mood: "roast" | "serious";
+						code: string;
+						language: string;
+						title: string;
+						createdAt: Date;
+						lines: number;
+				  } & RoastAnalysis)
+				| null
+			> => {
 				const roastData = await db
 					.select({
 						id: roasts.id,
@@ -137,7 +159,21 @@ export const appRouter = router({
 
 				if (!roastData[0]) return null;
 
-				const analysis = JSON.parse(roastData[0].analysisJson || "{}");
+				let analysis: RoastAnalysis = {
+					score: 5,
+					verdict: "solid_work",
+					roast: "",
+					issues: [],
+					diff: [],
+				};
+				try {
+					const parsed = JSON.parse(roastData[0].analysisJson || "{}");
+					if (parsed.score !== undefined) {
+						analysis = parsed as RoastAnalysis;
+					}
+				} catch {
+					console.warn("Failed to parse analysisJson for roast:", input);
+				}
 
 				return {
 					id: roastData[0].id,
@@ -150,7 +186,8 @@ export const appRouter = router({
 					lines: roastData[0].code.split("\n").length,
 					...analysis,
 				};
-			}),
+			},
+		),
 	}),
 });
 
