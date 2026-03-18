@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 import {
 	Navbar,
@@ -36,11 +37,11 @@ export default function RootLayout({
 			>
 				<Providers>
 					<Navbar>
-						<NavbarBrand>
+						<Link href="/" className="flex items-center gap-2 cursor-pointer">
 							<span className="text-accent-green font-mono font-bold">
 								DevRoast
 							</span>
-						</NavbarBrand>
+						</Link>
 						<NavbarSpacer />
 						<NavbarLink href="/leaderboard">Leaderboard</NavbarLink>
 					</Navbar>
