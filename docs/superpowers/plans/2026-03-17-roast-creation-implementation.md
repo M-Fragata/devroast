@@ -38,7 +38,7 @@ export const roasts = pgTable('roasts', {
 - [ ] **Step 2: Add Gemini API key to .env.local**
 
 ```
-GEMINI_API_KEY=AIzaSyCKyTgNCNDb3ZgHy-lXe0oJkX-GheL7xSM
+GEMINI_API_KEY=your-api-key-here
 ```
 
 - [ ] **Step 3: Generate and run migration**
