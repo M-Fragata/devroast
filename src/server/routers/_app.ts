@@ -2,7 +2,7 @@ import { avg, count, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { leaderboardEntries, roasts, snippets } from "@/db/schema";
-import { generateRoast, type RoastAnalysis } from "@/lib/gpt";
+import { generateRoast, type RoastAnalysis } from "@/lib/gemini";
 import { publicProcedure, router } from "@/server/trpc";
 
 export const appRouter = router({
