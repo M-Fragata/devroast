@@ -3,15 +3,17 @@
 import { Button } from "@/app/components/ui/button";
 
 interface ShareButtonProps {
-	url: string;
+	id: string;
+	roastText: string;
 }
 
-export function ShareButton({ url }: ShareButtonProps) {
-	const ogImageUrl = `http://localhost:3000/api/og/${url}`;
+export function ShareButton({ id, roastText }: ShareButtonProps) {
+	const ogImageUrl = `http://localhost:3000/api/og/${id}`;
 
 	const handleShare = async () => {
 		try {
-			await navigator.clipboard.writeText(ogImageUrl);
+			const shareText = `${roastText}\n\n${ogImageUrl}`;
+			await navigator.clipboard.writeText(shareText);
 		} catch {
 			console.error("Failed to copy URL");
 		}
