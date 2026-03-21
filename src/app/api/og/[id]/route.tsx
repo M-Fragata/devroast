@@ -202,9 +202,12 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					display: "flex",
 					flexDirection: "row",
 					alignItems: "center",
+					justifyContent: "center",
 					marginTop: "28px",
 					paddingLeft: "64px",
 					paddingRight: "64px",
+					maxWidth: "1072px",
+					overflow: "hidden",
 				}}
 			>
 				<span
@@ -215,6 +218,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 						lineHeight: "1.4",
 						fontFamily: "IBM Plex Mono, IBM Plex Mono Fallback, monospace",
 						textAlign: "center",
+						wordWrap: "break-word",
 					}}
 				>
 					{`"${roastText}"`}
