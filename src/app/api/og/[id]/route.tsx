@@ -27,208 +27,216 @@ function formatVerdict(verdict: string): string {
 }
 
 export async function GET(_req: Request, { params }: OGImageProps) {
-	const { id } = await params;
-	const roastId = parseInt(id);
-
-	const roastData = await db
-		.select({
-			id: roasts.id,
-			content: roasts.content,
-			analysisJson: roasts.analysisJson,
-			code: snippets.content,
-			language: snippets.language,
-		})
-		.from(roasts)
-		.innerJoin(snippets, eq(roasts.snippetId, snippets.id))
-		.where(eq(roasts.id, roastId));
-
-	if (!roastData[0]) {
-		return new NextResponse("Roast not found", { status: 404 });
-	}
-
-	const data = roastData[0];
-
-	let analysis: RoastAnalysis = {
-		score: 5,
-		verdict: "solid_work",
-		roast: "",
-		issues: [],
-		diff: [],
-	};
-
 	try {
-		const parsed = JSON.parse(data.analysisJson || "{}");
-		if (parsed.score !== undefined) {
-			analysis = parsed as RoastAnalysis;
+		const { id } = await params;
+		const roastId = parseInt(id);
+
+		const roastData = await db
+			.select({
+				id: roasts.id,
+				content: roasts.content,
+				analysisJson: roasts.analysisJson,
+				code: snippets.content,
+				language: snippets.language,
+			})
+			.from(roasts)
+			.innerJoin(snippets, eq(roasts.snippetId, snippets.id))
+			.where(eq(roasts.id, roastId));
+
+		if (!roastData[0]) {
+			return new NextResponse("Roast not found", { status: 404 });
 		}
-	} catch {
-		console.warn("Failed to parse analysisJson for roast:", roastId);
-	}
 
-	const lines = data.code.split("\n").length;
-	const scoreDisplay =
-		analysis.score % 1 === 0
-			? analysis.score.toString()
-			: analysis.score.toFixed(1);
-	const verdictDisplay = formatVerdict(analysis.verdict);
-	const roastText = analysis.roast || data.content || "";
+		const data = roastData[0];
 
-	return new ImageResponse(
-		<div
-			style={{
-				width: "1200px",
-				height: "630px",
-				background: "#0C0C0C",
-				border: "1px solid #2A2A2A",
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				justifyContent: "center",
-				gap: "16px",
-				padding: "0",
-				fontFamily: "JetBrains Mono, JetBrains Mono Fallback, monospace",
-			}}
-		>
+		let analysis: RoastAnalysis = {
+			score: 5,
+			verdict: "solid_work",
+			roast: "",
+			issues: [],
+			diff: [],
+		};
+
+		try {
+			const parsed = JSON.parse(data.analysisJson || "{}");
+			if (parsed.score !== undefined) {
+				analysis = parsed as RoastAnalysis;
+			}
+		} catch {
+			console.warn("Failed to parse analysisJson for roast:", roastId);
+		}
+
+		const lines = data.code.split("\n").length;
+		const scoreDisplay =
+			analysis.score % 1 === 0
+				? analysis.score.toString()
+				: analysis.score.toFixed(1);
+		const verdictDisplay = formatVerdict(analysis.verdict);
+		const roastText = analysis.roast || data.content || "";
+
+		const response = new ImageResponse(
 			<div
 				style={{
+					width: "1200px",
+					height: "630px",
+					background: "#0C0C0C",
+					border: "1px solid #2A2A2A",
 					display: "flex",
-					flexDirection: "row",
+					flexDirection: "column",
 					alignItems: "center",
-					gap: "8px",
-				}}
-			>
-				<span
-					style={{
-						color: "#22C55E",
-						fontSize: "24px",
-						fontWeight: "700",
-						lineHeight: "1",
-					}}
-				>
-					{">"}
-				</span>
-				<span
-					style={{
-						color: "#FAFAFA",
-						fontSize: "20px",
-						fontWeight: "400",
-						lineHeight: "1",
-						marginLeft: "8px",
-					}}
-				>
-					devroast
-				</span>
-			</div>
-
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "flex-end",
-					gap: "4px",
-				}}
-			>
-				<span
-					style={{
-						color: "#F59E0B",
-						fontSize: "160px",
-						fontWeight: "700",
-						lineHeight: "1",
-					}}
-				>
-					{scoreDisplay}
-				</span>
-				<span
-					style={{
-						color: "#4B5563",
-						fontSize: "56px",
-						fontWeight: "400",
-						lineHeight: "1",
-						marginBottom: "12px",
-					}}
-				>
-					/10
-				</span>
-			</div>
-
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					gap: "8px",
+					justifyContent: "center",
+					gap: "16px",
+					padding: "0",
+					fontFamily: "JetBrains Mono, monospace",
 				}}
 			>
 				<div
 					style={{
-						width: "12px",
-						height: "12px",
-						borderRadius: "50%",
-						background: "#EF4444",
+						display: "flex",
+						flexDirection: "row",
+						alignItems: "center",
+						gap: "8px",
 					}}
-				/>
-				<span
+				>
+					<span
+						style={{
+							color: "#22C55E",
+							fontSize: "24px",
+							fontWeight: "700",
+							lineHeight: "1",
+						}}
+					>
+						{">"}
+					</span>
+					<span
+						style={{
+							color: "#FAFAFA",
+							fontSize: "20px",
+							fontWeight: "400",
+							lineHeight: "1",
+							marginLeft: "8px",
+						}}
+					>
+						devroast
+					</span>
+				</div>
+
+				<div
 					style={{
-						color: "#EF4444",
-						fontSize: "20px",
+						display: "flex",
+						flexDirection: "row",
+						alignItems: "flex-end",
+						gap: "4px",
+					}}
+				>
+					<span
+						style={{
+							color: "#F59E0B",
+							fontSize: "160px",
+							fontWeight: "700",
+							lineHeight: "1",
+						}}
+					>
+						{scoreDisplay}
+					</span>
+					<span
+						style={{
+							color: "#4B5563",
+							fontSize: "56px",
+							fontWeight: "400",
+							lineHeight: "1",
+							marginBottom: "12px",
+						}}
+					>
+						/10
+					</span>
+				</div>
+
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						alignItems: "center",
+						gap: "8px",
+					}}
+				>
+					<div
+						style={{
+							width: "12px",
+							height: "12px",
+							borderRadius: "50%",
+							background: "#EF4444",
+						}}
+					/>
+					<span
+						style={{
+							color: "#EF4444",
+							fontSize: "20px",
+							fontWeight: "400",
+							lineHeight: "1",
+						}}
+					>
+						{verdictDisplay}
+					</span>
+				</div>
+
+				<div
+					style={{
+						color: "#4B5563",
+						fontSize: "16px",
 						fontWeight: "400",
 						lineHeight: "1",
 					}}
 				>
-					{verdictDisplay}
-				</span>
-			</div>
+					{"lang: "}
+					{data.language}
+					{" · "}
+					{lines}
+					{" lines"}
+				</div>
 
-			<div
-				style={{
-					color: "#4B5563",
-					fontSize: "16px",
-					fontWeight: "400",
-					lineHeight: "1",
-				}}
-			>
-				{"lang: "}
-				{data.language}
-				{" · "}
-				{lines}
-				{" lines"}
-			</div>
-
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "center",
-					marginTop: "24px",
-					paddingLeft: "64px",
-					paddingRight: "64px",
-					maxWidth: "1072px",
-				}}
-			>
-				<span
+				<div
 					style={{
-						color: "#FAFAFA",
-						fontSize: "22px",
-						fontWeight: "400",
-						lineHeight: "1.4",
-						fontFamily: "IBM Plex Mono, IBM Plex Mono Fallback, monospace",
-						textAlign: "center",
-						wordWrap: "break-word",
-						display: "-webkit-box",
-						WebkitLineClamp: 5,
-						WebkitBoxOrient: "vertical",
-						overflow: "hidden",
-						textOverflow: "ellipsis",
+						display: "flex",
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "center",
+						marginTop: "24px",
+						paddingLeft: "64px",
+						paddingRight: "64px",
+						maxWidth: "1072px",
 					}}
 				>
-					{`"${roastText}"`}
-				</span>
-			</div>
-		</div>,
-		{
-			width: 1200,
-			height: 630,
-		},
-	);
+					<span
+						style={{
+							color: "#FAFAFA",
+							fontSize: "22px",
+							fontWeight: "400",
+							lineHeight: "1.4",
+							fontFamily: "IBM Plex Mono, monospace",
+							textAlign: "center",
+							wordWrap: "break-word",
+							display: "-webkit-box",
+							WebkitLineClamp: 5,
+							WebkitBoxOrient: "vertical",
+							overflow: "hidden",
+							textOverflow: "ellipsis",
+						}}
+					>
+						{`"${roastText}"`}
+					</span>
+				</div>
+			</div>,
+			{
+				width: 1200,
+				height: 630,
+			},
+		);
+
+		response.headers.set("Content-Type", "image/png");
+		return response;
+	} catch (error) {
+		console.error("Error generating OG image:", error);
+		return new NextResponse("Error generating image", { status: 500 });
+	}
 }
