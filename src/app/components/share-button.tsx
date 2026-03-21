@@ -7,7 +7,7 @@ interface ShareButtonProps {
 }
 
 export function ShareButton({ url }: ShareButtonProps) {
-	const ogImageUrl = `/api/og/${url}`;
+	const ogImageUrl = `http://localhost:3000/api/og/${url}`;
 
 	const handleShare = async () => {
 		try {
