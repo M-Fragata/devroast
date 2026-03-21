@@ -70,7 +70,7 @@ docker-compose up -d
 
 4. Copie o arquivo de ambiente e configure suas variáveis:
 ```bash
-cp .env.example .env
+cp .env
 # Edite o .env com suas credenciais (DATABASE_URL, GEMINI_API_KEY)
 ```
 
