@@ -17,6 +17,7 @@ interface RaySoCodeEditorProps {
 	initialLanguage?: Language;
 	onChange?: (code: string, language: Language) => void;
 	onSubmit?: (code: string, language: Language, mood: boolean) => void;
+	isLoading?: boolean;
 }
 
 export function RaySoCodeEditor({
@@ -24,6 +25,7 @@ export function RaySoCodeEditor({
 	initialLanguage,
 	onChange,
 	onSubmit,
+	isLoading = false,
 }: RaySoCodeEditorProps) {
 	const [code, setCode] = useState(initialCode);
 	const [language, setLanguage] = useState<Language>(
@@ -248,10 +250,10 @@ export function RaySoCodeEditor({
 					</span>
 					<button
 						onClick={handleSubmit}
-						disabled={charCount > MAX_CODE_LENGTH || !code.trim()}
+						disabled={charCount > MAX_CODE_LENGTH || !code.trim() || isLoading}
 						className="bg-[#10B981] text-[#0A0A0A] text-xs font-medium px-4 py-2 rounded cursor-pointer hover:bg-[#0D9668] transition-colors disabled:bg-[#4B5563] disabled:cursor-not-allowed disabled:text-[#6B7280]"
 					>
-						$ roast_my_code
+						{isLoading ? "$ processing..." : "$ roast_my_code"}
 					</button>
 				</div>
 			</div>
