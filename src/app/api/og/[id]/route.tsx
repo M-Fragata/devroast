@@ -94,7 +94,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: "0px",
-					marginTop: "123px",
+					marginTop: "80px",
 				}}
 			>
 				<span
