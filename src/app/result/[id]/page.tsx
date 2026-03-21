@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { ShareButton } from "@/app/components/share-button";
 import { CodeBlock } from "@/app/components/ui/code-block";
 import { db } from "@/db";
 import { roasts, snippets } from "@/db/schema";
@@ -107,6 +108,10 @@ export default async function ResultPage({ params }: ResultPageProps) {
 		<div className="min-h-screen bg-bg-page text-foreground font-mono">
 			<main className="flex flex-col items-center py-6 md:py-10 px-4 md:px-10">
 				<div className="w-full max-w-[960px] space-y-10 px-0 md:px-0">
+					<div className="flex justify-end">
+						<ShareButton url={`https://devroast.dev/result/${id}`} />
+					</div>
+
 					<div className="flex items-center gap-12">
 						<div className="relative w-[180px] h-[180px] flex items-center justify-center">
 							<svg className="w-full h-full transform -rotate-90">
