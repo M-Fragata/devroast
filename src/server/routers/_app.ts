@@ -78,12 +78,6 @@ export const appRouter = router({
 					const currentPeriod = new Date().toISOString().slice(0, 7);
 
 					return await db.transaction(async (tx) => {
-						const existingCount = await tx
-							.select({ count: count() })
-							.from(leaderboardEntries)
-							.where(eq(leaderboardEntries.period, currentPeriod));
-						const rank = (existingCount[0]?.count ?? 0) + 1;
-
 						const [snippet] = await tx
 							.insert(snippets)
 							.values({
@@ -114,8 +108,21 @@ export const appRouter = router({
 							snippetId: snippet.id,
 							score: analysis.score,
 							period: currentPeriod,
-							rank,
+							rank: 0,
 						});
+
+						const allEntries = await tx
+							.select({ id: leaderboardEntries.id })
+							.from(leaderboardEntries)
+							.where(eq(leaderboardEntries.period, currentPeriod))
+							.orderBy(leaderboardEntries.score);
+
+						for (let i = 0; i < allEntries.length; i++) {
+							await tx
+								.update(leaderboardEntries)
+								.set({ rank: i + 1 })
+								.where(eq(leaderboardEntries.id, allEntries[i].id));
+						}
 
 						return { roastId: roast.id, snippetId: snippet.id };
 					});

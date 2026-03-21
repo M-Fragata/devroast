@@ -1,6 +1,6 @@
 "use client";
-import { CodeDisplay } from "./CodeDisplay";
 import { trpc } from "@/lib/trpc-client";
+import { ShameCodeRow } from "./ui/shame-code-row";
 
 export default function ShameLeaderboard() {
 	const { data: worstSnippets, isLoading } = trpc.leaderboard.useQuery();
@@ -18,7 +18,6 @@ export default function ShameLeaderboard() {
 
 	return (
 		<div className="w-full max-w-[960px] space-y-4 px-0 md:px-0">
-			{/* Title Row */}
 			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-4 md:px-0">
 				<div className="flex items-center gap-2">
 					<span className="text-accent-green font-bold">{"//"}</span>
@@ -32,73 +31,19 @@ export default function ShameLeaderboard() {
 				{"//"} the worst code on the internet, ranked by shame
 			</p>
 
-			{/* Table Container with border */}
-			<div className="border border-border-primary">
-				{/* Table Header */}
-				<div className="h-10 flex items-center px-5 bg-bg-surface border-b border-border-primary">
-					<div className="w-[50px] text-text-tertiary text-xs font-medium">
-						#
-					</div>
-					<div className="w-[70px] text-text-tertiary text-xs font-medium">
-						score
-					</div>
-					<div className="flex-1 text-text-tertiary text-xs font-medium">
-						code
-					</div>
-					<div className="w-[100px] text-text-tertiary text-xs font-medium">
-						lang
-					</div>
-				</div>
-
-				{/* Table Rows */}
-				{snippets.map((entry, index) => (
-					<div
+			<div className="flex flex-col gap-4">
+				{snippets.map((entry) => (
+					<ShameCodeRow
 						key={entry.snippetId}
-						className={`flex items-start px-5 py-4 ${
-							index < snippets.length - 1
-								? "border-b border-border-primary"
-								: ""
-						}`}
-					>
-						{/* Rank Column */}
-						<div className="w-[50px] pt-1">
-							<span
-								className={`font-mono text-xs ${
-									entry.rank === 1 ? "text-accent-amber" : "text-text-secondary"
-								}`}
-							>
-								{entry.rank}
-							</span>
-						</div>
-
-						{/* Score Column */}
-						<div className="w-[70px] pt-1">
-							<span className="font-mono text-xs font-bold text-accent-red">
-								{entry.score.toFixed(1)}
-							</span>
-						</div>
-
-						{/* Code Column */}
-						<div className="flex-1">
-							<CodeDisplay
-								code={entry.code}
-								language={entry.language}
-								maxLines={3}
-								className="text-xs"
-							/>
-						</div>
-
-						{/* Language Column */}
-						<div className="w-[100px] pt-1">
-							<span className="font-mono text-xs text-text-secondary">
-								{entry.language}
-							</span>
-						</div>
-					</div>
+						rank={entry.rank}
+						score={entry.score}
+						code={entry.code}
+						language={entry.language}
+						lines={entry.lines}
+					/>
 				))}
 			</div>
 
-			{/* Footer */}
 			<div className="text-center py-3 text-text-tertiary text-xs px-4">
 				showing top 3 of {snippets.length} · view full leaderboard &gt;
 			</div>

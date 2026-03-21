@@ -41,16 +41,16 @@ export async function generateRoast(
 	language: string,
 	mood: "serious" | "roast",
 ): Promise<RoastAnalysis> {
-	const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+	const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
 	const systemPrompt =
 		mood === "roast"
 			? `You are a sarcastic code reviewer called "DevRoast". 
-         Roast the code brutally but accurately.
-         Always respond with valid JSON.`
+		 Roast the code brutally but accurately.
+		 Always respond with valid JSON.`
 			: `You are a professional code reviewer.
-         Provide constructive feedback.
-         Always respond with valid JSON.`;
+		 Provide constructive feedback.
+		 Always respond with valid JSON.`;
 
 	const userPrompt = `
 ${systemPrompt}
@@ -62,10 +62,10 @@ Analyze this ${language} code and return ONLY valid JSON (no markdown, no explan
   "verdict": "exceptional" | "needs_serious_help" | "rough_around_edges" | "decent_code" | "solid_work",
   "roast": "your commentary",
   "issues": [
-    {"title": "issue name", "description": "details", "status": "critical" | "warning" | "good"}
+	{"title": "issue name", "description": "details", "status": "critical" | "warning" | "good"}
   ],
   "diff": [
-    {"type": "add" | "remove" | "context", "content": "code line"}
+	{"type": "add" | "remove" | "context", "content": "code line"}
   ]
 }
 
@@ -75,17 +75,13 @@ ${code}
 
 	try {
 		const result = await model.generateContent(userPrompt);
-		const response = result.response.text();
+		const responseText = result.response.text();
 
-		const jsonMatch = response.match(/\{[\s\S]*?\}/);
-		if (!jsonMatch) {
-			throw new Error("Invalid response from Gemini: no JSON found");
-		}
+		// O segredo do seu código da Nívea: o try/catch interno para o JSON
+		const cleanJson = responseText.replace(/```json|```/g, "").trim();
+		const parsed = JSON.parse(cleanJson);
 
-		const parsed = JSON.parse(jsonMatch[0]) as unknown;
-		const validated = roastAnalysisSchema.parse(parsed);
-
-		return validated;
+		return roastAnalysisSchema.parse(parsed);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			throw new Error(

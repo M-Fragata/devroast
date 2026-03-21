@@ -105,7 +105,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 						lineHeight: "1",
 					}}
 				>
-					{"{ }"}
+					{">"}
 				</span>
 				<span
 					style={{

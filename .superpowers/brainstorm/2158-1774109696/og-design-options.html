@@ -1,0 +1,148 @@
+<h2>OG Image Design Options</h2>
+<p class="subtitle">3 approaches to display roast result with OpenGraph metadata</p>
+
+<div class="cards">
+  <div class="card" data-choice="minimal" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:#0C0C0C">
+        <!-- Minimal: Code snippet centered with score badge -->
+        <rect width="1200" height="630" fill="#0C0C0C"/>
+        
+        <!-- Top bar -->
+        <rect x="0" y="0" width="1200" height="60" fill="#111111"/>
+        <text x="40" y="38" fill="#FF8400" font-family="monospace" font-size="20" font-weight="bold">DEVROAST</text>
+        <text x="1160" y="38" fill="#6B7280" font-family="monospace" font-size="14" text-anchor="end">roast result</text>
+        
+        <!-- Score Circle -->
+        <circle cx="180" cy="315" r="80" fill="none" stroke="#1F1F1F" stroke-width="8"/>
+        <circle cx="180" cy="315" r="80" fill="none" stroke="#EF4444" stroke-width="8" stroke-dasharray="377" stroke-dashoffset="150" transform="rotate(-90 180 315)"/>
+        <text x="180" y="325" fill="#F59E0B" font-family="monospace" font-size="48" font-weight="bold" text-anchor="middle">3</text>
+        <text x="180" y="350" fill="#6B7280" font-family="monospace" font-size="16" text-anchor="middle">/10</text>
+        
+        <!-- Code Block -->
+        <rect x="300" y="100" width="860" height="430" rx="8" fill="#111111"/>
+        <rect x="300" y="100" width="860" height="36" rx="8" fill="#1F1F1F"/>
+        <circle cx="324" cy="118" r="6" fill="#EF4444"/>
+        <circle cx="346" cy="118" r="6" fill="#F59E0B"/>
+        <circle cx="368" cy="118" r="6" fill="#22C55E"/>
+        <text x="330" y="180" fill="#C678DD" font-family="monospace" font-size="18">const</text>
+        <text x="400" y="180" fill="#E06C75" font-family="monospace" font-size="18">roast</text>
+        <text x="475" y="180" fill="#ABB2BF" font-family="monospace" font-size="18">=</text>
+        <text x="500" y="180" fill="#61AFEF" font-family="monospace" font-size="18">"overcooked"</text>
+        <text x="680" y="180" fill="#ABB2BF" font-family="monospace" font-size="18">;</text>
+        <text x="330" y="220" fill="#ABB2BF" font-family="monospace" font-size="18">// needs more seasoning</text>
+        
+        <!-- Language tag -->
+        <rect x="300" y="490" width="80" height="28" rx="4" fill="#1F1F1F"/>
+        <text x="340" y="510" fill="#6B7280" font-family="monospace" font-size="12" text-anchor="middle">JS</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>Minimal</h3>
+      <p>Score badge + code snippet. Clean, focused on the code being roasted.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="showcase" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:#0C0C0C">
+        <!-- Showcase: Full roast summary with verdict -->
+        <rect width="1200" height="630" fill="#0C0C0C"/>
+        
+        <!-- Left panel - Score -->
+        <rect x="0" y="0" width="400" height="630" fill="#111111"/>
+        <circle cx="200" cy="200" r="100" fill="none" stroke="#1F1F1F" stroke-width="10"/>
+        <circle cx="200" cy="200" r="100" fill="none" stroke="#F59E0B" stroke-width="10" stroke-dasharray="628" stroke-dashoffset="190" transform="rotate(-90 200 200)"/>
+        <text x="200" y="220" fill="#F59E0B" font-family="monospace" font-size="72" font-weight="bold" text-anchor="middle">5</text>
+        <text x="200" y="255" fill="#6B7280" font-family="monospace" font-size="18" text-anchor="middle">/10</text>
+        
+        <!-- Verdict -->
+        <rect x="50" y="340" width="140" height="32" rx="16" fill="#EF4444" opacity="0.2"/>
+        <text x="120" y="362" fill="#EF4444" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle">🔥 critical</text>
+        
+        <!-- Roast text preview -->
+        <text x="50" y="420" fill="#F2F3F0" font-family="monospace" font-size="16">"This code is so broken..."</text>
+        
+        <!-- DevRoast branding -->
+        <text x="200" y="580" fill="#FF8400" font-family="monospace" font-size="20" font-weight="bold" text-anchor="middle">DEVROAST</text>
+        
+        <!-- Right panel - Code preview -->
+        <rect x="440" y="60" width="720" height="510" rx="12" fill="#111111"/>
+        <rect x="440" y="60" width="720" height="44" rx="12" fill="#1F1F1F"/>
+        <circle cx="464" cy="82" r="6" fill="#EF4444"/>
+        <circle cx="486" cy="82" r="6" fill="#F59E0B"/>
+        <circle cx="508" cy="82" r="6" fill="#22C55E"/>
+        
+        <!-- Code lines -->
+        <text x="470" y="160" fill="#C678DD" font-family="monospace" font-size="16">function</text>
+        <text x="550" y="160" fill="#61AFEF" font-family="monospace" font-size="16"> fail</text>
+        <text x="610" y="160" fill="#ABB2BF" font-family="monospace" font-size="16">() {</text>
+        <text x="490" y="200" fill="#E5C07B" font-family="monospace" font-size="16">throw</text>
+        <text x="550" y="200" fill="#ABB2BF" font-family="monospace" font-size="16"> "errors";</text>
+        <text x="550" y="240" fill="#ABB2BF" font-family="monospace" font-size="16">}</text>
+        
+        <!-- Issues count -->
+        <rect x="470" y="460" width="100" height="28" rx="4" fill="#EF4444" opacity="0.2"/>
+        <text x="520" y="480" fill="#EF4444" font-family="monospace" font-size="12" text-anchor="middle">3 issues</text>
+        
+        <!-- Language -->
+        <rect x="590" y="460" width="80" height="28" rx="4" fill="#1F1F1F"/>
+        <text x="630" y="480" fill="#6B7280" font-family="monospace" font-size="12" text-anchor="middle">JS</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>Showcase</h3>
+      <p>Split layout: score + verdict on left, code on right. Shows full roast context.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="dramatic" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:#0C0C0C">
+        <!-- Dramatic: Big impact score + flame theme -->
+        <rect width="1200" height="630" fill="#0C0C0C"/>
+        
+        <!-- Gradient overlay top -->
+        <defs>
+          <linearGradient id="flameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#EF4444" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.1"/>
+          </linearGradient>
+        </defs>
+        <rect width="1200" height="630" fill="url(#flameGrad)"/>
+        
+        <!-- Header -->
+        <text x="600" y="70" fill="#FF8400" font-family="monospace" font-size="28" font-weight="bold" text-anchor="middle">🔥 DEVROAST 🔥</text>
+        
+        <!-- Big score -->
+        <text x="600" y="200" fill="#EF4444" font-family="monospace" font-size="180" font-weight="bold" text-anchor="middle">2</text>
+        <text x="750" y="200" fill="#6B7280" font-family="monospace" font-size="48" text-anchor="start">/10</text>
+        
+        <!-- Verdict banner -->
+        <rect x="350" y="240" width="500" height="50" rx="25" fill="#EF4444"/>
+        <text x="600" y="275" fill="#0C0C0C" font-family="monospace" font-size="24" font-weight="bold" text-anchor="middle">⚠️ DISASTER CODE</text>
+        
+        <!-- Roast quote -->
+        <rect x="100" y="340" width="1000" height="120" rx="12" fill="#111111"/>
+        <text x="600" y="400" fill="#F2F3F0" font-family="monospace" font-size="20" text-anchor="middle">"This is worse than PHP in 2005."</text>
+        
+        <!-- Code preview -->
+        <rect x="100" y="490" width="1000" height="100" rx="8" fill="#111111"/>
+        <text x="130" y="530" fill="#E06C75" font-family="monospace" font-size="18">async</text>
+        <text x="190" y="530" fill="#C678DD" font-family="monospace" font-size="18">function</text>
+        <text x="280" y="530" fill="#61AFEF" font-family="monospace" font-size="18"> catastrophe</text>
+        <text x="400" y="530" fill="#ABB2BF" font-family="monospace" font-size="18">(){</text>
+        <text x="160" y="560" fill="#E5C07B" font-family="monospace" font-size="18">await</text>
+        <text x="220" y="560" fill="#ABB2BF" font-family="monospace" font-size="18"> nothingWorks();</text>
+        <text x="480" y="560" fill="#ABB2BF" font-family="monospace" font-size="18">}</text>
+        
+        <!-- Footer -->
+        <text x="600" y="615" fill="#4B5563" font-family="monospace" font-size="14" text-anchor="middle">devroast.dev • share your code disasters</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>Dramatic</h3>
+      <p>Bold, attention-grabbing. Big score, flame accents, roast quote front and center.</p>
+    </div>
+  </div>
+</div>

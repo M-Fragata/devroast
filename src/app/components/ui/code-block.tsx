@@ -13,7 +13,6 @@ export async function CodeBlock({ code, language, className }: CodeBlockProps) {
 		theme: "vesper",
 	});
 
-	// Count lines for line numbers
 	const lines = code.split("\n");
 	const lineCount = lines.length;
 
@@ -24,24 +23,24 @@ export async function CodeBlock({ code, language, className }: CodeBlockProps) {
 				className,
 			)}
 		>
-			{/* Code Area with Line Numbers - No Header */}
-			<div className="flex bg-bg-input h-[180px] overflow-hidden">
-				{/* Line Numbers Column */}
-				<div className="w-12 bg-bg-surface border-r border-border-primary flex flex-col py-3 px-2 overflow-y-auto">
+			<div
+				className="flex bg-bg-input overflow-auto"
+				style={{ maxHeight: "52rem" }}
+			>
+				<div className="w-12 bg-bg-surface border-r border-border-primary shrink-0 py-3 px-2">
 					{Array.from({ length: lineCount }, (_, i) => (
-						<span
+						<div
 							key={i}
-							className="text-text-tertiary font-mono text-xs leading-[1.625rem] text-right"
+							className="h-[1.625rem] text-text-tertiary font-mono text-xs text-right leading-[1.625rem]"
 						>
 							{i + 1}
-						</span>
+						</div>
 					))}
 				</div>
 
-				{/* Code Content */}
-				<div className="flex-1 overflow-y-auto overflow-x-hidden p-4">
+				<div className="flex-1 min-w-0 p-4">
 					<pre
-						className="m-0 p-0 bg-bg-input whitespace-pre-wrap word-break-break-all"
+						className="m-0 p-0 bg-bg-input overflow-x-auto"
 						style={{
 							whiteSpace: "pre-wrap",
 							wordBreak: "break-word",

@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "./index";
 import { leaderboardEntries, roasts, snippets } from "./schema";
 
@@ -111,26 +111,35 @@ function getUserById(id: number): User | null {
 	await db.insert(roasts).values(mockRoasts);
 
 	// 3. Criar entradas de leaderboard fictícias com scores 0-10
-	const mockLeaderboard = Array.from({ length: 10 }, (_, i) => {
-		const month = String(faker.number.int({ min: 1, max: 12 })).padStart(
-			2,
-			"0",
-		);
-		return {
-			id: i + 1,
-			snippetId: faker.number.int({ min: 1, max: 20 }),
-			score: faker.number.int({ min: 0, max: 10 }),
-			period: `2024-${month}`,
-			rank: i + 1,
-			createdAt: faker.date.past(),
-			updatedAt: faker.date.recent(),
-		};
-	});
+	const month = String(faker.number.int({ min: 1, max: 12 })).padStart(2, "0");
+	const period = `2024-${month}`;
+
+	const mockLeaderboard = Array.from({ length: 10 }, () => ({
+		snippetId: faker.number.int({ min: 1, max: 20 }),
+		score: faker.number.int({ min: 0, max: 10 }),
+		period: period,
+		rank: 0,
+		createdAt: faker.date.past(),
+		updatedAt: faker.date.recent(),
+	}));
 
 	console.log(
 		`🏆 Inserindo ${mockLeaderboard.length} entradas de leaderboard...`,
 	);
 	await db.insert(leaderboardEntries).values(mockLeaderboard);
+
+	const orderedEntries = await db
+		.select({ id: leaderboardEntries.id })
+		.from(leaderboardEntries)
+		.where(eq(leaderboardEntries.period, period))
+		.orderBy(leaderboardEntries.score);
+
+	for (let i = 0; i < orderedEntries.length; i++) {
+		await db
+			.update(leaderboardEntries)
+			.set({ rank: i + 1 })
+			.where(eq(leaderboardEntries.id, orderedEntries[i].id));
+	}
 
 	console.log("✅ Seed concluído com sucesso!");
 }
