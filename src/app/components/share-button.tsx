@@ -7,9 +7,11 @@ interface ShareButtonProps {
 }
 
 export function ShareButton({ url }: ShareButtonProps) {
+	const ogImageUrl = `/api/og/${url}`;
+
 	const handleShare = async () => {
 		try {
-			await navigator.clipboard.writeText(url);
+			await navigator.clipboard.writeText(ogImageUrl);
 		} catch {
 			console.error("Failed to copy URL");
 		}
