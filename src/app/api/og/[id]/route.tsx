@@ -94,7 +94,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: "0px",
-					marginTop: "40px",
+					marginTop: "25px",
 				}}
 			>
 				<span
@@ -126,7 +126,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					flexDirection: "row",
 					alignItems: "flex-end",
 					gap: "0px",
-					marginTop: "28px",
+					marginTop: "20px",
 				}}
 			>
 				<span
@@ -158,7 +158,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: "8px",
-					marginTop: "28px",
+					marginTop: "20px",
 				}}
 			>
 				<div
@@ -187,7 +187,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					fontSize: "16px",
 					fontWeight: "400",
 					lineHeight: "1",
-					marginTop: "28px",
+					marginTop: "20px",
 				}}
 			>
 				{"lang: "}
@@ -203,7 +203,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					flexDirection: "row",
 					alignItems: "center",
 					justifyContent: "center",
-					marginTop: "16px",
+					marginTop: "15px",
 					marginBottom: "40px",
 					paddingLeft: "64px",
 					paddingRight: "64px",
