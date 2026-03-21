@@ -83,7 +83,8 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "center",
-				justifyContent: "flex-start",
+				justifyContent: "center",
+				gap: "16px",
 				padding: "0",
 				fontFamily: "JetBrains Mono, JetBrains Mono Fallback, monospace",
 			}}
@@ -93,8 +94,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					display: "flex",
 					flexDirection: "row",
 					alignItems: "center",
-					gap: "0px",
-					marginTop: "25px",
+					gap: "8px",
 				}}
 			>
 				<span
@@ -125,8 +125,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					display: "flex",
 					flexDirection: "row",
 					alignItems: "flex-end",
-					gap: "0px",
-					marginTop: "20px",
+					gap: "4px",
 				}}
 			>
 				<span
@@ -158,7 +157,6 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: "8px",
-					marginTop: "20px",
 				}}
 			>
 				<div
@@ -187,7 +185,6 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					fontSize: "16px",
 					fontWeight: "400",
 					lineHeight: "1",
-					marginTop: "20px",
 				}}
 			>
 				{"lang: "}
@@ -203,8 +200,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					flexDirection: "row",
 					alignItems: "center",
 					justifyContent: "center",
-					marginTop: "15px",
-					marginBottom: "40px",
+					marginTop: "24px",
 					paddingLeft: "64px",
 					paddingRight: "64px",
 					maxWidth: "1072px",
