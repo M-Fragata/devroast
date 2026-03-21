@@ -203,7 +203,7 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 					flexDirection: "row",
 					alignItems: "center",
 					justifyContent: "center",
-					marginTop: "28px",
+					marginTop: "16px",
 					paddingLeft: "64px",
 					paddingRight: "64px",
 					maxWidth: "1072px",
