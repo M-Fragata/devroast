@@ -1,39 +1,82 @@
-"use client";
-
-import { use } from "react";
+import { eq } from "drizzle-orm";
 import { CodeBlock } from "@/app/components/ui/code-block";
+import { db } from "@/db";
+import { roasts, snippets } from "@/db/schema";
 import type { RoastAnalysis } from "@/lib/gemini";
-import { trpc } from "@/lib/trpc-client";
+
+export async function generateMetadata({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}) {
+	const { id } = await params;
+	return {
+		openGraph: {
+			images: [{ url: `/api/og/${id}`, width: 1200, height: 630 }],
+		},
+	};
+}
 
 interface ResultPageProps {
 	params: Promise<{ id: string }>;
 }
 
-export default function ResultPage({ params }: ResultPageProps) {
-	const { id } = use(params);
+export default async function ResultPage({ params }: ResultPageProps) {
+	const { id } = await params;
 	const roastId = parseInt(id);
 
-	return <ResultContent roastId={roastId} />;
-}
+	const roastData = await db
+		.select({
+			id: roasts.id,
+			content: roasts.content,
+			mood: roasts.mood,
+			createdAt: roasts.createdAt,
+			analysisJson: roasts.analysisJson,
+			code: snippets.content,
+			language: snippets.language,
+			title: snippets.title,
+		})
+		.from(roasts)
+		.innerJoin(snippets, eq(roasts.snippetId, snippets.id))
+		.where(eq(roasts.id, roastId));
 
-function ResultContent({ roastId }: { roastId: number }) {
-	const { data, isLoading, error } = trpc.roast.getById.useQuery(roastId);
-
-	if (isLoading) {
-		return (
-			<div className="min-h-screen bg-bg-page text-foreground font-mono flex items-center justify-center">
-				<div className="text-text-secondary">Loading roast...</div>
-			</div>
-		);
-	}
-
-	if (error || !data) {
+	if (!roastData[0]) {
 		return (
 			<div className="min-h-screen bg-bg-page text-foreground font-mono flex items-center justify-center">
 				<div className="text-red-accent">Roast not found</div>
 			</div>
 		);
 	}
+
+	const data = roastData[0];
+
+	let analysis: RoastAnalysis = {
+		score: 5,
+		verdict: "solid_work",
+		roast: "",
+		issues: [],
+		diff: [],
+	};
+	try {
+		const parsed = JSON.parse(data.analysisJson || "{}");
+		if (parsed.score !== undefined) {
+			analysis = parsed as RoastAnalysis;
+		}
+	} catch {
+		console.warn("Failed to parse analysisJson for roast:", roastId);
+	}
+
+	const fullData = {
+		id: data.id,
+		content: data.content,
+		mood: data.mood,
+		code: data.code,
+		language: data.language,
+		title: data.title,
+		createdAt: data.createdAt,
+		lines: data.code.split("\n").length,
+		...analysis,
+	};
 
 	const getStatusColor = (status: string) => {
 		switch (status) {
@@ -64,7 +107,6 @@ function ResultContent({ roastId }: { roastId: number }) {
 		<div className="min-h-screen bg-bg-page text-foreground font-mono">
 			<main className="flex flex-col items-center py-6 md:py-10 px-4 md:px-10">
 				<div className="w-full max-w-[960px] space-y-10 px-0 md:px-0">
-					{/* Score Hero */}
 					<div className="flex items-center gap-12">
 						<div className="relative w-[180px] h-[180px] flex items-center justify-center">
 							<svg className="w-full h-full transform -rotate-90">
@@ -97,12 +139,12 @@ function ResultContent({ roastId }: { roastId: number }) {
 									stroke="url(#scoreGradient)"
 									strokeWidth="4"
 									strokeDasharray={`${2 * Math.PI * 80}`}
-									strokeDashoffset={`${2 * Math.PI * 80 * (1 - (data.score || 5) / 10)}`}
+									strokeDashoffset={`${2 * Math.PI * 80 * (1 - (fullData.score || 5) / 10)}`}
 								/>
 							</svg>
 							<div className="absolute inset-0 flex flex-col items-center justify-center">
 								<span className="text-4xl font-bold text-accent-amber">
-									{data.score || 5}
+									{fullData.score || 5}
 								</span>
 								<span className="text-sm text-text-tertiary">/10</span>
 							</div>
@@ -112,21 +154,21 @@ function ResultContent({ roastId }: { roastId: number }) {
 							<div className="flex items-center gap-2">
 								<div className="w-2 h-2 rounded-full bg-red-accent" />
 								<span className="text-red-accent font-mono text-sm">
-									verdict: {data.verdict || "solid_work"}
+									verdict: {fullData.verdict || "solid_work"}
 								</span>
 							</div>
 
 							<h2 className="text-text-primary font-mono text-xl leading-relaxed">
-								{data.roast || data.content || "No roast available"}
+								{fullData.roast || fullData.content || "No roast available"}
 							</h2>
 
 							<div className="flex items-center gap-4">
 								<span className="text-text-tertiary font-mono text-xs">
-									lang: {data.language}
+									lang: {fullData.language}
 								</span>
 								<span className="text-text-tertiary">·</span>
 								<span className="text-text-tertiary font-mono text-xs">
-									{data.lines} lines
+									{fullData.lines} lines
 								</span>
 							</div>
 						</div>
@@ -134,7 +176,6 @@ function ResultContent({ roastId }: { roastId: number }) {
 
 					<div className="w-full h-px bg-border-primary" />
 
-					{/* Submitted Code */}
 					<div className="space-y-4">
 						<div className="flex items-center gap-2">
 							<span className="text-accent-green font-mono text-sm font-bold">
@@ -145,16 +186,15 @@ function ResultContent({ roastId }: { roastId: number }) {
 							</span>
 						</div>
 						<CodeBlock
-							code={data.code}
-							language={data.language}
+							code={fullData.code}
+							language={fullData.language}
 							className="w-full"
 						/>
 					</div>
 
 					<div className="w-full h-px bg-border-primary" />
 
-					{/* Analysis */}
-					{data.issues && data.issues.length > 0 && (
+					{fullData.issues && fullData.issues.length > 0 && (
 						<div className="space-y-6">
 							<div className="flex items-center gap-2">
 								<span className="text-accent-green font-mono text-sm font-bold">
@@ -166,7 +206,7 @@ function ResultContent({ roastId }: { roastId: number }) {
 							</div>
 
 							<div className="grid grid-cols-2 gap-5">
-								{data.issues.map(
+								{fullData.issues.map(
 									(issue: RoastAnalysis["issues"][number], index: number) => {
 										const status = getStatusColor(issue.status);
 										return (
@@ -198,7 +238,7 @@ function ResultContent({ roastId }: { roastId: number }) {
 						</div>
 					)}
 
-					{data.diff && data.diff.length > 0 && (
+					{fullData.diff && fullData.diff.length > 0 && (
 						<>
 							<div className="w-full h-px bg-border-primary" />
 
@@ -219,7 +259,7 @@ function ResultContent({ roastId }: { roastId: number }) {
 										</span>
 									</div>
 									<div className="py-1">
-										{data.diff.map(
+										{fullData.diff.map(
 											(line: RoastAnalysis["diff"][number], index: number) => {
 												const bgColor =
 													line.type === "remove"
