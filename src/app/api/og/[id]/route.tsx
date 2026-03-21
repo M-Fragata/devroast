@@ -116,14 +116,11 @@ export async function GET(_req: Request, { params }: OGImageProps) {
 						paddingLeft: 64,
 						paddingRight: 64,
 						maxWidth: 1072,
+						maxHeight: 180,
+						overflow: "hidden",
 						color: "#FAFAFA",
 						fontSize: 22,
 						textAlign: "center",
-						display: "-webkit-box",
-						WebkitLineClamp: 5,
-						WebkitBoxOrient: "vertical",
-						overflow: "hidden",
-						textOverflow: "ellipsis",
 					}}
 				>
 					{`"${roastText}"`}
